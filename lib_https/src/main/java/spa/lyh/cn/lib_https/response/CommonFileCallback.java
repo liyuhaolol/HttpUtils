@@ -65,7 +65,7 @@ public class CommonFileCallback extends CommonBase implements Callback {
                 switch (msg.what) {
                     case PROGRESS_MESSAGE:
                         Progress p = (Progress) msg.obj;
-                        mListener.onProgress(p.getProgress(),p.getCurrentSize(),p.getSumSize());
+                        mListener.onProgress(p.haveFileSize(),p.getProgress(),p.getCurrentSize(),p.getSumSize());
                         break;
                     case SUCCESS_MESSAGE:
                         Success success = (Success) msg.obj;
