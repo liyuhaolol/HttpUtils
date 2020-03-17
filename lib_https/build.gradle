@@ -28,6 +28,7 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     api 'com.squareup.okhttp3:okhttp:4.2.2'
     implementation 'com.alibaba:fastjson:1.2.62'
+    implementation 'spa.lyh.cn:lib_io:1.0.0'
 }
 
 def siteUrl = 'https://github.com/liyuhaolol/HttpUtils'

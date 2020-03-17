@@ -1,5 +1,6 @@
 package spa.lyh.cn.lib_https.response;
 
+import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
@@ -20,6 +21,7 @@ import spa.lyh.cn.lib_https.listener.DisposeDownloadListener;
 import spa.lyh.cn.lib_https.model.Progress;
 import spa.lyh.cn.lib_https.model.Success;
 import spa.lyh.cn.lib_https.response.base.CommonBase;
+import spa.lyh.cn.utils_io.IOUtils;
 
 
 /**
@@ -50,10 +52,13 @@ public class CommonFileCallback extends CommonBase implements Callback {
     private String mFilePath;
     private boolean devMode;
 
-    public CommonFileCallback(DisposeDataHandle handle) {
+    private Context context;
+
+    public CommonFileCallback(Context context,DisposeDataHandle handle) {
         this.mListener = handle.downloadListener;
         this.mFilePath = handle.mSource;
         this.devMode = handle.devMode;
+        this.context = context;
         this.mDeliveryHandler = new Handler(Looper.getMainLooper()) {
             @Override
             public void handleMessage(Message msg) {
@@ -128,9 +133,9 @@ public class CommonFileCallback extends CommonBase implements Callback {
         int length;//每一块的长度
         byte[] buffer = new byte[2048];//每一段的长度
         InputStream inputStream = null;
-        checkLocalFilePath(mFilePath);
-        String filePath = mFilePath+"/"+filename;
-        File file = new File(filePath);
+        //checkLocalFilePath(mFilePath);
+        //String filePath = mFilePath+"/"+filename;
+        //File file = new File(filePath);
         FileOutputStream fos = null;
 
 
@@ -138,18 +143,24 @@ public class CommonFileCallback extends CommonBase implements Callback {
         int lastSize = -1;
         long sumLength;
         float mProgress;
+        IOUtils utils = new IOUtils();
 
         Progress p;
         try {
 
             inputStream  = response.body().byteStream();//输入流
-            fos  = new FileOutputStream(file);
+            fos  = utils.getFileOutputStream(context,mFilePath,filename);
+            if (fos == null){
+                mDeliveryHandler.obtainMessage(FAILURE_MESSAGE, new OkHttpException(OkHttpException.OTHER_ERROR, EMPTY_RESPONSE)).sendToTarget();
+                return;
+            }
+
             sumLength = response.body().contentLength();//文件总大小
 
 
             if (sumLength > 0){
                 //这里应该发送一下总大小，已经进度为0
-                p = new Progress(0,convertFileSize(0),convertFileSize(sumLength));
+                p = new Progress(true,0,convertFileSize(0),convertFileSize(sumLength));
                 if (devMode){
                     Log.e(TAG,p.getProgress()+"%   "+p.getCurrentSize()+"/"+p.getSumSize());
                 }
@@ -164,7 +175,7 @@ public class CommonFileCallback extends CommonBase implements Callback {
                     //判断整型进度去重只传100次0到100
                     if (currentSize != lastSize){
                         lastSize = currentSize;
-                        p = new Progress(lastSize,convertFileSize(currentLength),convertFileSize(sumLength));
+                        p = new Progress(true,lastSize,convertFileSize(currentLength),convertFileSize(sumLength));
                         if (devMode){
                             Log.e(TAG,p.getProgress()+"%   "+p.getCurrentSize()+"/"+p.getSumSize());
                         }
@@ -173,12 +184,25 @@ public class CommonFileCallback extends CommonBase implements Callback {
                 }
                 fos.flush();
             }else {
-                //输出失败，解析错误
+                //无法获取到对应的文件总长度
+                p = new Progress(false,0,convertFileSize(0),"");
                 if (devMode){
-                    Log.e(TAG,IO_LENGTH_MSG);
+                    Log.e(TAG,"无法获取到文件流长度");
+                    Log.e(TAG,"已下载"+p.getCurrentSize());
                 }
-                mDeliveryHandler.obtainMessage(FAILURE_MESSAGE, new OkHttpException(OkHttpException.IO_ERROR, IO_LENGTH_MSG)).sendToTarget();
-                return;
+
+                mDeliveryHandler.obtainMessage(PROGRESS_MESSAGE, p).sendToTarget();
+                while ((length = inputStream.read(buffer)) != -1) {
+                    fos.write(buffer, 0, length);
+                    currentLength += length;
+
+                    p = new Progress(false,0,convertFileSize(currentLength),"");
+                    if (devMode){
+                        Log.e(TAG,"已下载"+p.getCurrentSize());
+                    }
+                    mDeliveryHandler.obtainMessage(PROGRESS_MESSAGE, p).sendToTarget();
+                }
+                fos.flush();
             }
 
         } catch (Exception e) {
@@ -198,7 +222,7 @@ public class CommonFileCallback extends CommonBase implements Callback {
                 e.printStackTrace();
             }
         }
-        Success success = new Success(filePath,filename);
+        Success success = new Success(utils.getFilePath(),utils.getFileName());
         mDeliveryHandler.sendMessageDelayed(mDeliveryHandler.obtainMessage(SUCCESS_MESSAGE,success),50);
     }
 
