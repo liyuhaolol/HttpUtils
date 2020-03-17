@@ -11,7 +11,7 @@ android {
         minSdkVersion 19
         targetSdkVersion 29
         versionCode 1
-        versionName "1.0"
+        versionName "1.0.1"
         consumerProguardFiles 'consumer-rules.pro'
     }
 
@@ -39,7 +39,7 @@ def libName = 'lib_https'
 
 group = "spa.lyh.cn"
 
-version = "1.0.0"
+version = "1.0.1"
 
 task sourcesJar(type: Jar) {
     from android.sourceSets.main.java.srcDirs
@@ -76,6 +76,12 @@ install{
                         groupId 'com.alibaba'
                         artifactId 'fastjson'
                         version '1.2.62'
+                        scope 'implementation'
+                    }
+                    dependency{
+                        groupId 'spa.lyh.cn'
+                        artifactId 'lib_io'
+                        version '1.0.0'
                         scope 'implementation'
                     }
                 }
