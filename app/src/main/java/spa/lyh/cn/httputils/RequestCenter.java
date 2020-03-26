@@ -5,8 +5,7 @@ import android.app.Activity;
 import com.alibaba.fastjson.TypeReference;
 
 import okhttp3.Call;
-import okhttp3.internal.Version;
-import spa.lyh.cn.lib_https.CommonOkHttpClient;
+import spa.lyh.cn.lib_https.HttpClient;
 import spa.lyh.cn.lib_https.listener.DisposeDataHandle;
 import spa.lyh.cn.lib_https.listener.DisposeDataListener;
 import spa.lyh.cn.lib_https.request.CommonRequest;
@@ -32,7 +31,7 @@ public class RequestCenter {
         //初始化等待loadDialog并显示
         //final LoadingDialog loadDialog = new LoadingDialog(activity);
         //创建网络请求
-        Call call = CommonOkHttpClient.getInstance(activity).sendResquest(CommonRequest.
+        Call call = HttpClient.getInstance(activity).sendResquest(CommonRequest.
                 createPostRequest(url, params, headers, true), new DisposeDataHandle(new DisposeDataListener() {
             @Override
             public void onSuccess(Object responseObj) {

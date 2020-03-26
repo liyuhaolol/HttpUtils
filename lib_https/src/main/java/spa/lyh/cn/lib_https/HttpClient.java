@@ -22,23 +22,25 @@ import spa.lyh.cn.lib_https.response.CommonJsonCallback;
  * @author qndroid
  * @function 用来发送get, post请求的工具类，包括设置一些请求的共用参数
  */
-public class CommonOkHttpClient {
+public class HttpClient {
     private static final int TIME_OUT = 60;//超时参数
+    public final static int OVERWRITE_FIRST = 1;
+    public final static int ADD_ONLY = 2;
     private OkHttpClient mOkHttpClient;
 
-    private static CommonOkHttpClient instance;
+    private static HttpClient instance;
 
-    public static CommonOkHttpClient getInstance(Context context){
+    public static HttpClient getInstance(Context context){
         if (instance == null){
-            synchronized (CommonOkHttpClient.class){
+            synchronized (HttpClient.class){
                 if (instance == null){
-                    instance = new CommonOkHttpClient(context);
+                    instance = new HttpClient(context);
                 }
             }
         }
         return instance;
     }
-    private CommonOkHttpClient(Context context){
+    private HttpClient(Context context){
         //为Client设置参数
         OkHttpClient.Builder okHttpClientBuilder = new OkHttpClient.Builder();
         okHttpClientBuilder.hostnameVerifier(new HostnameVerifier() {
@@ -79,10 +81,10 @@ public class CommonOkHttpClient {
         return call;
     }
 
-    public Call downloadFile(Context context,Request request, DisposeDataHandle handle) {
+    public Call downloadFile(Context context,Request request, DisposeDataHandle handle,int mod) {
         if (request != null){
             Call call = mOkHttpClient.newCall(request);
-            call.enqueue(new CommonFileCallback(context,handle));
+            call.enqueue(new CommonFileCallback(context,handle,mod));
             return call;
         }else {
             return null;

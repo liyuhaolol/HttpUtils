@@ -1,6 +1,7 @@
 package spa.lyh.cn.lib_https.response;
 
 import android.content.Context;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
@@ -22,6 +23,7 @@ import spa.lyh.cn.lib_https.model.Progress;
 import spa.lyh.cn.lib_https.model.Success;
 import spa.lyh.cn.lib_https.response.base.CommonBase;
 import spa.lyh.cn.utils_io.IOUtils;
+import spa.lyh.cn.utils_io.model.FileData;
 
 
 /**
@@ -53,12 +55,14 @@ public class CommonFileCallback extends CommonBase implements Callback {
     private boolean devMode;
 
     private Context context;
+    private int mod;
 
-    public CommonFileCallback(Context context,DisposeDataHandle handle) {
+    public CommonFileCallback(Context context,DisposeDataHandle handle,int mod) {
         this.mListener = handle.downloadListener;
         this.mFilePath = handle.mSource;
         this.devMode = handle.devMode;
         this.context = context;
+        this.mod = mod;
         this.mDeliveryHandler = new Handler(Looper.getMainLooper()) {
             @Override
             public void handleMessage(Message msg) {
@@ -143,18 +147,18 @@ public class CommonFileCallback extends CommonBase implements Callback {
         int lastSize = -1;
         long sumLength;
         float mProgress;
-        IOUtils utils = new IOUtils();
+        FileData data;
 
         Progress p;
         try {
 
             inputStream  = response.body().byteStream();//输入流
-            fos  = utils.getFileOutputStream(context,mFilePath,filename);
-            if (fos == null){
+            data = IOUtils.createFileOutputStream(context,mFilePath,filename,mod);
+            if (data == null || data.getFos() == null){
                 mDeliveryHandler.obtainMessage(FAILURE_MESSAGE, new OkHttpException(OkHttpException.OTHER_ERROR, EMPTY_RESPONSE)).sendToTarget();
                 return;
             }
-
+            fos = data.getFos();
             sumLength = response.body().contentLength();//文件总大小
 
 
@@ -222,14 +226,10 @@ public class CommonFileCallback extends CommonBase implements Callback {
                 e.printStackTrace();
             }
         }
-        Success success = new Success(utils.getFilePath(),utils.getFileName());
+        Success success = new Success(data.getFilePath(),data.getFileName());
         mDeliveryHandler.sendMessageDelayed(mDeliveryHandler.obtainMessage(SUCCESS_MESSAGE,success),50);
-    }
-
-    private void checkLocalFilePath(String localFilePath) {
-        File path = new File(localFilePath);
-        if (!path.exists()) {
-            path.mkdirs();
+        if (!data.getFilePath().startsWith(Environment.getExternalStorageDirectory().getPath() + "/Android")){
+            IOUtils.fileScan(context,data.getFilePath());
         }
     }
 
