@@ -9,8 +9,8 @@ android {
     defaultConfig {
         minSdkVersion 21
         targetSdkVersion 29
-        versionCode 6
-        versionName "1.0.5"
+        versionCode versions.versionCode
+        versionName versions.versionName
         consumerProguardFiles 'consumer-rules.pro'
     }
 
@@ -25,10 +25,10 @@ android {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    api 'com.squareup.okhttp3:okhttp:4.2.2'
-    implementation 'com.alibaba:fastjson:1.2.62'
-    implementation 'spa.lyh.cn:lib_io:1.0.4'
-    implementation 'org.conscrypt:conscrypt-android:2.4.0'
+    api "com.squareup.okhttp3:okhttp:${versions.okhttp}"
+    implementation "com.alibaba:fastjson:${versions.fastjson}"
+    implementation "spa.lyh.cn:lib_io:${versions.lib_io}"
+    implementation "org.conscrypt:conscrypt-android:${versions.conscrypt}"
 }
 
 def siteUrl = 'https://github.com/liyuhaolol/HttpUtils'
@@ -39,7 +39,7 @@ def libName = 'lib_https'
 
 group = "spa.lyh.cn"
 
-version = "1.0.5"
+version = versions.versionName
 
 task sourcesJar(type: Jar) {
     from android.sourceSets.main.java.srcDirs
@@ -69,25 +69,25 @@ install{
                     dependency{
                         groupId 'com.squareup.okhttp3'
                         artifactId 'okhttp'
-                        version '4.2.2'
+                        version versions.okhttp
                         scope 'api'
                     }
                     dependency{
                         groupId 'com.alibaba'
                         artifactId 'fastjson'
-                        version '1.2.62'
+                        version versions.fastjson
                         scope 'implementation'
                     }
                     dependency{
                         groupId 'spa.lyh.cn'
                         artifactId 'lib_io'
-                        version '1.0.0'
+                        version versions.lib_io
                         scope 'implementation'
                     }
                     dependency{
                         groupId 'org.conscrypt'
                         artifactId 'conscrypt-android'
-                        version '2.4.0'
+                        version versions.conscrypt
                         scope 'implementation'
                     }
                 }

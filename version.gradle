@@ -1,0 +1,13 @@
+ext {
+    versions = [
+            versionCode : 7,
+            versionName : '1.0.6',
+
+            okhttp : '4.2.2',
+            fastjson : '1.2.62',
+            lib_io : '1.0.4',
+            conscrypt : '2.4.0'
+
+
+    ]
+}
