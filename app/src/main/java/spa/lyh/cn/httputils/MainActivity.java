@@ -5,8 +5,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Context;
 import android.os.Bundle;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import okhttp3.Call;
+import okhttp3.Headers;
 import spa.lyh.cn.lib_https.HttpClient;
 import spa.lyh.cn.lib_https.exception.OkHttpException;
 import spa.lyh.cn.lib_https.listener.DisposeDataHandle;
@@ -27,7 +29,8 @@ public class MainActivity extends AppCompatActivity {
 
         RequestCenter.getNewVersion(this, new DisposeDataListener() {
             @Override
-            public void onSuccess(Object responseObj) {
+            public void onSuccess(Headers headerData,Object responseObj) {
+                Toast.makeText(MainActivity.this,headerData.get("Content-Type"), Toast.LENGTH_SHORT).show();
                 String msg = (String) responseObj;
                 text.setText(msg);
             }

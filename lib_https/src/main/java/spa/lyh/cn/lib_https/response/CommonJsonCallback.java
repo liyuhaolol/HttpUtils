@@ -73,7 +73,7 @@ public class CommonJsonCallback extends CommonBase implements Callback {
         mDeliveryHandler.post(new Runnable() {
             @Override
             public void run() {
-                handleResponse(result);
+                handleResponse(response.headers(),result);
                 /**
                  * handle the cookie
                  */
@@ -94,28 +94,27 @@ public class CommonJsonCallback extends CommonBase implements Callback {
         return tempList;
     }
 
-    private void handleResponse(Object responseObj) {
-        if (responseObj == null || responseObj.toString().trim().equals("")) {
+    private void handleResponse(Headers headerData,Object bodyData) {
+        if (bodyData == null || bodyData.toString().trim().equals("")) {
             mListener.onFailure(new OkHttpException(OkHttpException.NETWORK_ERROR, EMPTY_MSG));//网络错误
             return;
         }
-        String responseString = responseObj.toString();
         //是否在控制台打印信息
         if (devMode){
-            LyhLog.e(TAG,responseString);
+            LyhLog.e(TAG,bodyData.toString());
         }
 
         try {
             //范型为空时，直接回调成功的字符串
             if (typeReference == null){
-                mListener.onSuccess(responseObj.toString());
+                mListener.onSuccess(headerData,bodyData.toString());
                 return;
             }
             //按照范型解析
-            Object realResult = JSONObject.parseObject(responseObj.toString(), typeReference);
+            Object realResult = JSONObject.parseObject(bodyData.toString(), typeReference);
 
             if (realResult != null){
-                mListener.onSuccess(realResult);
+                mListener.onSuccess(headerData,realResult);
             }else {
                 mListener.onFailure(new OkHttpException(OkHttpException.OTHER_ERROR, EMPTY_MSG));
             }

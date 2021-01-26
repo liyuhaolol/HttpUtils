@@ -5,6 +5,7 @@ import android.app.Activity;
 import com.alibaba.fastjson.TypeReference;
 
 import okhttp3.Call;
+import okhttp3.Headers;
 import spa.lyh.cn.lib_https.HttpClient;
 import spa.lyh.cn.lib_https.listener.DisposeDataHandle;
 import spa.lyh.cn.lib_https.listener.DisposeDataListener;
@@ -34,11 +35,11 @@ public class RequestCenter {
         Call call = HttpClient.getInstance(activity).sendResquest(CommonRequest.
                 createPostRequest(url, params, headers, true), new DisposeDataHandle(new DisposeDataListener() {
             @Override
-            public void onSuccess(Object responseObj) {
+            public void onSuccess(Headers headerData,Object responseObj) {
                 if (!activity.isFinishing()){
                     if (listener != null){
                         try {
-                            listener.onSuccess(responseObj);
+                            listener.onSuccess(headerData,responseObj);
                         }catch (Exception e){
                             e.printStackTrace();
                         }
