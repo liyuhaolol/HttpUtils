@@ -6,7 +6,8 @@ ext {
             okhttp : '4.9.0',
             fastjson : '1.1.72.android',
             lib_io : '1.0.6',
-            conscrypt : '2.4.0'
+            conscrypt : '2.4.0',
+            documentfile : '1.0.1'
 
 
     ]

@@ -5,7 +5,7 @@ package spa.lyh.cn.lib_https.response.base;
  */
 
 public class CommonBase {
-    public final String TAG = "cns_sdk_net";
+    public final String TAG = "HttpUtils";
     /**
      * the logic layer exception, may alter in different app
      *

@@ -29,6 +29,7 @@ dependencies {
     implementation "com.alibaba:fastjson:${versions.fastjson}"
     implementation "spa.lyh.cn:lib_io:${versions.lib_io}"
     implementation "org.conscrypt:conscrypt-android:${versions.conscrypt}"
+    implementation "androidx.documentfile:documentfile:${versions.documentfile}"
 }
 
 def siteUrl = 'https://github.com/liyuhaolol/HttpUtils'
@@ -88,6 +89,12 @@ install{
                         groupId 'org.conscrypt'
                         artifactId 'conscrypt-android'
                         version versions.conscrypt
+                        scope 'implementation'
+                    }
+                    dependency{
+                        groupId 'androidx.documentfile'
+                        artifactId 'documentfile'
+                        version versions.documentfile
                         scope 'implementation'
                     }
                 }

@@ -131,15 +131,10 @@ public class CommonFileCallback extends CommonBase implements Callback {
 
         String filename = getFileName(response);
 
-////////////////////////////
-
 
         int length;//每一块的长度
         byte[] buffer = new byte[2048];//每一段的长度
         InputStream inputStream = null;
-        //checkLocalFilePath(mFilePath);
-        //String filePath = mFilePath+"/"+filename;
-        //File file = new File(filePath);
         FileOutputStream fos = null;
 
 
