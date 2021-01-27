@@ -81,7 +81,7 @@ public class ThreadPool extends Thread{
             }else if (mode == MultipartUploadCenter.TASK_CANCAL){
                 this.mode = MultipartUploadCenter.TASK_CANCAL;
             }else {
-                Log.e(MultipartUploadCenter.TAG,"停止线程池参数不对，不能停止任务");
+                Log.e(MultipartUploadCenter.TAG,"停止线程池参数不对，无法停止任务");
                 return;
             }
             service.shutdownNow();

@@ -19,6 +19,9 @@ import okhttp3.Response;
 import okhttp3.ResponseBody;
 import spa.lyh.cn.lib_https.HttpClient;
 import spa.lyh.cn.lib_https.MultipartUploadCenter;
+import spa.lyh.cn.lib_https.listener.MultpartListener;
+import spa.lyh.cn.lib_https.model.Result;
+import spa.lyh.cn.lib_https.request.PieceRequestBody;
 import spa.lyh.cn.lib_https.request.RequestParams;
 
 public class FilePartUploadThread extends Thread implements Runnable{

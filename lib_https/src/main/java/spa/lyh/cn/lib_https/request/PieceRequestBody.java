@@ -9,6 +9,7 @@ import java.io.IOException;
 import okhttp3.MediaType;
 import okhttp3.RequestBody;
 import okio.BufferedSink;
+import spa.lyh.cn.lib_https.listener.MultpartListener;
 
 public class PieceRequestBody extends RequestBody {
     private ByteArrayInputStream mSource; //当前需要传输的一片
