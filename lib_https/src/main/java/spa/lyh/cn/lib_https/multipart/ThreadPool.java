@@ -95,7 +95,7 @@ public class ThreadPool extends Thread{
                 fis = new FileInputStream((File) res);
             }
             if (res instanceof Uri){
-                fis = IOUtils.getFileInPutStream(context,(Uri) res);
+                fis = IOUtils.getFileInputStream(context,(Uri) res);
             }
         }catch (Exception e){
             e.printStackTrace();
