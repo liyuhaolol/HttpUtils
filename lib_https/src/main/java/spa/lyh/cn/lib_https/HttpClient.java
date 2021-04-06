@@ -16,6 +16,7 @@ import spa.lyh.cn.lib_https.cookie.SimpleCookieJar;
 import spa.lyh.cn.lib_https.https.HttpsUtils;
 import spa.lyh.cn.lib_https.listener.DisposeDataHandle;
 import spa.lyh.cn.lib_https.response.CommonFileCallback;
+import spa.lyh.cn.lib_https.response.CommonHeadCallback;
 import spa.lyh.cn.lib_https.response.CommonJsonCallback;
 
 /**
@@ -78,6 +79,12 @@ public class HttpClient {
     public Call sendResquest(Request request, DisposeDataHandle handle) {
         Call call = mOkHttpClient.newCall(request);
         call.enqueue(new CommonJsonCallback(handle));
+        return call;
+    }
+
+    public Call headResquest(Request request, DisposeDataHandle handle) {
+        Call call = mOkHttpClient.newCall(request);
+        call.enqueue(new CommonHeadCallback(handle));
         return call;
     }
 

@@ -10,6 +10,7 @@ public class DisposeDataHandle {
 
 	public DisposeDataListener mListener = null;
 	public DisposeDownloadListener downloadListener = null;
+	public DisposeHeadListener headListener = null;
 	//public Class<?> mClass = null;
 	public TypeReference<?> typeReference = null;
 	public boolean devMode;
@@ -25,6 +26,22 @@ public class DisposeDataHandle {
 		this.mListener = listener;
 	}
 
+
+
+
+	public DisposeDataHandle(DisposeHeadListener listener,boolean devMode)
+	{
+		this.headListener = listener;
+		this.devMode = devMode;
+	}
+
+
+	/**
+	 * json请求使用的handle
+	 * @param listener
+	 * @param typeReference
+	 * @param devMode
+	 */
 	public DisposeDataHandle(DisposeDataListener listener, TypeReference<?> typeReference,boolean devMode)
 	{
 		this.mListener = listener;
@@ -32,6 +49,12 @@ public class DisposeDataHandle {
 		this.devMode = devMode;
 	}
 
+	/**
+	 * 下文请求使用的handle
+	 * @param listener
+	 * @param source
+	 * @param devMode
+	 */
 	public DisposeDataHandle(DisposeDownloadListener listener, String source,boolean devMode)
 	{
 		this.downloadListener = listener;

@@ -9,6 +9,7 @@ import okhttp3.Headers;
 import spa.lyh.cn.lib_https.HttpClient;
 import spa.lyh.cn.lib_https.listener.DisposeDataHandle;
 import spa.lyh.cn.lib_https.listener.DisposeDataListener;
+import spa.lyh.cn.lib_https.listener.DisposeHeadListener;
 import spa.lyh.cn.lib_https.request.CommonRequest;
 import spa.lyh.cn.lib_https.request.RequestParams;
 
@@ -60,6 +61,28 @@ public class RequestCenter {
                 }
             }
         }, typeReference, true));
+
+        return call;
+    }
+
+    protected static Call headRequest(final Activity activity, String url, RequestParams headers, final DisposeHeadListener listener) {
+        //创建网络请求
+        Call call = HttpClient.getInstance(activity).headResquest(CommonRequest.
+                createHeadRequest(url, headers, true), new DisposeDataHandle(new DisposeHeadListener() {
+            @Override
+            public void onSuccess(Headers headerData) {
+                if (listener != null){
+                    listener.onSuccess(headerData);
+                }
+            }
+
+            @Override
+            public void onFailure(Object error) {
+                if (listener != null){
+                    listener.onFailure(error);
+                }
+            }
+        }, true));
 
         return call;
     }

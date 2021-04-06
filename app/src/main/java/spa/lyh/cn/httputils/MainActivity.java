@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -14,6 +15,7 @@ import spa.lyh.cn.lib_https.exception.OkHttpException;
 import spa.lyh.cn.lib_https.listener.DisposeDataHandle;
 import spa.lyh.cn.lib_https.listener.DisposeDataListener;
 import spa.lyh.cn.lib_https.listener.DisposeDownloadListener;
+import spa.lyh.cn.lib_https.listener.DisposeHeadListener;
 import spa.lyh.cn.lib_https.request.CommonRequest;
 import spa.lyh.cn.lib_https.request.RequestParams;
 
@@ -64,6 +66,19 @@ public class MainActivity extends AppCompatActivity {
                         }else {
                             progress_tv.setText("已下载："+currentSize);
                         }
+                    }
+                });
+
+        RequestCenter.headRequest(this,
+                "https://ss0.bdstatic.com/70cFvHSh_Q1YnxGkpoWK1HF6hhy/it/u=3208238474,2536510412&fm=26&gp=0.jpg",
+                null,
+                new DisposeHeadListener() {
+                    @Override
+                    public void onSuccess(Headers headerData) {
+                    }
+
+                    @Override
+                    public void onFailure(Object error) {
                     }
                 });
     }
