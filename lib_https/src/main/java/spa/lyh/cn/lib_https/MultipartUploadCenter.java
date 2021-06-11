@@ -361,7 +361,7 @@ public class MultipartUploadCenter {
                 Result result = (Result) bodyData;
                 if (result.code == 200){
                     String info;
-                    if (!TextUtils.isEmpty(result.info.url)){
+                    if (result.info != null && !TextUtils.isEmpty(result.info.url)){
                         info = result.info.url;
                     }else {
                         info = "";

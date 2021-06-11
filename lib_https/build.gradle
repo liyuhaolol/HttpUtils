@@ -26,8 +26,8 @@ android {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     api "com.squareup.okhttp3:okhttp:${versions.okhttp}"
-    implementation "com.alibaba:fastjson:${versions.fastjson}"
-    implementation "com.github.liyuhaolol:IO:${versions.lib_io}"
+    api "com.alibaba:fastjson:${versions.fastjson}"
+    api "com.github.liyuhaolol:IO:${versions.lib_io}"
     implementation "org.conscrypt:conscrypt-android:${versions.conscrypt}"
     implementation "androidx.documentfile:documentfile:${versions.documentfile}"
 }
