@@ -2,6 +2,7 @@ package spa.lyh.cn.lib_https.request;
 
 import java.io.FileNotFoundException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -9,16 +10,12 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author liyuhao
  */
 public class RequestParams {
-
-    public ConcurrentHashMap<String, String> urlParams = new ConcurrentHashMap<String, String>();
-    public ConcurrentHashMap<String, Object> fileParams = new ConcurrentHashMap<String, Object>();
+    public ConcurrentHashMap<String, Object> urlParams = new ConcurrentHashMap<>();
 
     /**
      * Constructs a new empty {@code RequestParams} instance.
      */
-    public RequestParams() {
-        this((Map<String, String>) null);
-    }
+    public RequestParams(){}
 
     /**
      * Constructs a new RequestParams instance containing the key/value string
@@ -61,15 +58,22 @@ public class RequestParams {
         }
     }
 
-    public void put(String key, Object object) throws FileNotFoundException {
+    public void put(String key, List<String> listValue){
 
-        if (key != null) {
-            fileParams.put(key, object);
+        if (key != null && listValue != null) {
+            urlParams.put(key, listValue);
+        }
+    }
+
+    public void put(String key, String[] listValue){
+
+        if (key != null && listValue != null) {
+            urlParams.put(key, listValue);
         }
     }
 
     public boolean hasParams() {
-        if(urlParams.size() > 0 || fileParams.size() > 0){
+        if(urlParams.size() > 0){
 
             return true;
         }
