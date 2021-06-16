@@ -54,14 +54,14 @@ public class FilePartUploadThread extends Thread implements Runnable{
             this.bodyParams.put("chunk", String.valueOf(chunk));
             for (Map.Entry<String, Object> entry : bodyParams.urlParams.entrySet()) {
                 //变成私有变量，避免线程锁的问题
-                //this.bodyParams.put(entry.getKey(), entry.getValue());
+                this.bodyParams.put(entry.getKey(), entry.getValue());
             }
         }
         if (headerParams != null){
             this.headerParams = new RequestParams();
             for (Map.Entry<String, Object> entry : headerParams.urlParams.entrySet()) {
                 //变成私有变量，避免线程锁的问题
-                //this.headerParams.put(entry.getKey(), entry.getValue());
+                this.headerParams.put(entry.getKey(), entry.getValue());
             }
         }
     }
@@ -115,7 +115,7 @@ public class FilePartUploadThread extends Thread implements Runnable{
         if (bodyParams != null) {
             for (Map.Entry<String, Object> entry : bodyParams.urlParams.entrySet()) {
                 //将请求参数遍历添加到我们的请求构建类中
-                //multipartBodyBuilder.addFormDataPart(entry.getKey(), entry.getValue());
+                multipartBodyBuilder.addFormDataPart(entry.getKey(), entry.getValue());
             }
         }
         PieceRequestBody requestBody = new PieceRequestBody(datas, mPiceRealSize, new MultpartListener() {
@@ -131,7 +131,7 @@ public class FilePartUploadThread extends Thread implements Runnable{
         Headers.Builder mHeaderBuild = new Headers.Builder();
         if (headerParams != null) {
             for (Map.Entry<String, Object> entry : headerParams.urlParams.entrySet()) {
-                //mHeaderBuild.add(entry.getKey(), entry.getValue());
+                mHeaderBuild.add(entry.getKey(), entry.getValue());
             }
         }
         //生成header
