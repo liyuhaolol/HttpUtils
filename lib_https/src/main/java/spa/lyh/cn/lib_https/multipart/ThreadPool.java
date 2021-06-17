@@ -12,6 +12,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import spa.lyh.cn.lib_https.MultipartUploadCenter;
+import spa.lyh.cn.lib_https.request.HeaderParams;
 import spa.lyh.cn.lib_https.request.RequestParams;
 import spa.lyh.cn.utils_io.IOUtils;
 
@@ -26,10 +27,11 @@ public class ThreadPool extends Thread{
     private Context context;
     private String fileName;
     private String url;
-    private RequestParams bodyParams,headerParams;
+    private RequestParams bodyParams;
+    private HeaderParams headerParams;
     private int mode;
 
-    public ThreadPool(Context context, Handler handler, Object res, int threads, long chunks, int pieceSize, String fileName, String url, RequestParams bodyParams, RequestParams headerParams){
+    public ThreadPool(Context context, Handler handler, Object res, int threads, long chunks, int pieceSize, String fileName, String url, RequestParams bodyParams, HeaderParams headerParams){
         this.handler = handler;
         this.res = res;
         this.threads = threads;

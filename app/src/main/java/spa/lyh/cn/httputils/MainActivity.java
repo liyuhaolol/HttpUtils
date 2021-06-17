@@ -17,6 +17,7 @@ import spa.lyh.cn.lib_https.listener.DisposeDataListener;
 import spa.lyh.cn.lib_https.listener.DisposeDownloadListener;
 import spa.lyh.cn.lib_https.listener.DisposeHeadListener;
 import spa.lyh.cn.lib_https.request.CommonRequest;
+import spa.lyh.cn.lib_https.request.HeaderParams;
 import spa.lyh.cn.lib_https.request.RequestParams;
 
 public class MainActivity extends AppCompatActivity {
@@ -42,7 +43,7 @@ public class MainActivity extends AppCompatActivity {
                 OkHttpException exception = (OkHttpException) reasonObj;
                 text.setText(exception.getEmsg());
             }
-        });
+        },"","haha");
 
         downloadFile(this,
                 "https://ss0.bdstatic.com/70cFvHSh_Q1YnxGkpoWK1HF6hhy/it/u=3208238474,2536510412&fm=26&gp=0.jpg",
@@ -84,7 +85,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public static Call downloadFile(Context context, String url, String path, int mod, DisposeDownloadListener listener) {
-        RequestParams params = new RequestParams();
+        HeaderParams params = new HeaderParams();
         return HttpClient.getInstance(context).downloadFile(context,
                 CommonRequest.createDownloadRequest(url, null, params, true),
                 new DisposeDataHandle(listener, path, true),mod);

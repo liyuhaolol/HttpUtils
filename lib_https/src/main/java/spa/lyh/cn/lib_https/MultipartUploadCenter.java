@@ -24,6 +24,7 @@ import spa.lyh.cn.lib_https.model.Progress;
 import spa.lyh.cn.lib_https.model.Result;
 import spa.lyh.cn.lib_https.multipart.ThreadPool;
 import spa.lyh.cn.lib_https.request.CommonRequest;
+import spa.lyh.cn.lib_https.request.HeaderParams;
 import spa.lyh.cn.lib_https.request.RequestParams;
 import spa.lyh.cn.utils_io.IOUtils;
 
@@ -144,7 +145,8 @@ public class MultipartUploadCenter {
 
     private String uploadUrl,mergeUrl;
 
-    private RequestParams bodyParams,headerParams;
+    private RequestParams bodyParams;
+    private HeaderParams headerParams;
 
     private DocumentFile documentFile;
 
@@ -172,7 +174,7 @@ public class MultipartUploadCenter {
         return this;
     }
 
-    public MultipartUploadCenter setUp(Context context, String uploadUrl, String mergeUrl, RequestParams bodyParams, RequestParams headerParams, Object res, boolean isDev, UploadTaskListener listener){
+    public MultipartUploadCenter setUp(Context context, String uploadUrl, String mergeUrl, RequestParams bodyParams, HeaderParams headerParams, Object res, boolean isDev, UploadTaskListener listener){
         this.context = context;
         this.bodyParams = bodyParams;
         this.uploadUrl = uploadUrl;

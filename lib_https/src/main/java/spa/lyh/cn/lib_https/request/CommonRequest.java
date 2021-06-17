@@ -35,20 +35,19 @@ public class CommonRequest {
      * @param headers 头文件
      * @return request
      */
-    public static Request createPostRequest(String url, RequestParams params, RequestParams headers, boolean isDev) {
+    public static Request createPostRequest(String url, RequestParams params, HeaderParams headers, boolean isDev) {
         FormBody.Builder mFormBodyBuild = new FormBody.Builder();
         if (params != null) {
             for (Map.Entry<String, Object> entry : params.urlParams.entrySet()) {
                 //将请求参数遍历添加到我们的请求构建类中
                 ParamsInject.AddFormBodyBuilder(mFormBodyBuild,entry.getKey(), entry.getValue());
-                //mFormBodyBuild.add(entry.getKey(), entry.getValue());
             }
         }
         //添加请求头
         Headers.Builder mHeaderBuild = new Headers.Builder();
         if (headers != null) {
-            for (Map.Entry<String, Object> entry : headers.urlParams.entrySet()) {
-                //mHeaderBuild.add(entry.getKey(), entry.getValue());
+            for (Map.Entry<String, String> entry : headers.urlParams.entrySet()) {
+                mHeaderBuild.add(entry.getKey(), entry.getValue());
             }
         }
         //通过请求构建类的build方法获取真正的请求对象
@@ -84,17 +83,17 @@ public class CommonRequest {
      * @param headers 头文件
      * @return request
      */
-    public static Request createGetRequest(String url, RequestParams params, RequestParams headers, boolean isDev) {
+    public static Request createGetRequest(String url, RequestParams params, HeaderParams headers, boolean isDev) {
         StringBuilder urlBuilder = new StringBuilder(url).append("?");
         if (params != null) {
             for (Map.Entry<String, Object> entry : params.urlParams.entrySet()) {
-                urlBuilder.append(entry.getKey()).append("=").append(entry.getValue()).append("&");
+                ParamsInject.AddUrlParams(urlBuilder,entry.getKey(),entry.getValue());
             }
         }
         //添加请求头
         Headers.Builder mHeaderBuild = new Headers.Builder();
         if (headers != null) {
-            for (Map.Entry<String, Object> entry : headers.urlParams.entrySet()) {
+            for (Map.Entry<String, String> entry : headers.urlParams.entrySet()) {
                 mHeaderBuild.add(entry.getKey(), entry.getValue());
             }
         }
@@ -131,7 +130,7 @@ public class CommonRequest {
      * @param isDev 是否为开发者模式
      * @return Request
      */
-    public static Request createUploadRequest(String url, RequestParams params, FilePart file, RequestParams headers, boolean isDev, UploadProgressListener listener){
+    public static Request createUploadRequest(String url, RequestParams params, FilePart file, HeaderParams headers, boolean isDev, UploadProgressListener listener){
 
         List<FilePart> lst = new ArrayList<>();
         lst.add(file);
@@ -147,14 +146,14 @@ public class CommonRequest {
      * @param isDev 是否为开发者模式
      * @return Request
      */
-    public static Request createUploadRequest(String url, RequestParams params, List<FilePart> fileList, RequestParams headers, boolean isDev, UploadProgressListener listener){
+    public static Request createUploadRequest(String url, RequestParams params, List<FilePart> fileList, HeaderParams headers, boolean isDev, UploadProgressListener listener){
 
         MultipartBody.Builder multipartBodyBuilder = new MultipartBody.Builder();
         multipartBodyBuilder.setType(MultipartBody.FORM);
         if (params != null) {
             for (Map.Entry<String, Object> entry : params.urlParams.entrySet()) {
                 //将请求参数遍历添加到我们的请求构建类中
-                multipartBodyBuilder.addFormDataPart(entry.getKey(), entry.getValue());
+                ParamsInject.AddMultipartBodyBuilder(multipartBodyBuilder,entry.getKey(), entry.getValue());
             }
         }
 
@@ -167,7 +166,7 @@ public class CommonRequest {
         //添加请求头
         Headers.Builder mHeaderBuild = new Headers.Builder();
         if (headers != null) {
-            for (Map.Entry<String, Object> entry : headers.urlParams.entrySet()) {
+            for (Map.Entry<String, String> entry : headers.urlParams.entrySet()) {
                 mHeaderBuild.add(entry.getKey(), entry.getValue());
             }
         }
@@ -194,18 +193,18 @@ public class CommonRequest {
         return createDeleteRequest(url, params, null,false);
     }
 
-    public static Request createDeleteRequest(String url, RequestParams params, RequestParams headers, boolean isDev) {
+    public static Request createDeleteRequest(String url, RequestParams params, HeaderParams headers, boolean isDev) {
         FormBody.Builder mFormBodyBuild = new FormBody.Builder();
         if (params != null) {
             for (Map.Entry<String, Object> entry : params.urlParams.entrySet()) {
                 //将请求参数遍历添加到我们的请求构建类中
-                mFormBodyBuild.add(entry.getKey(), entry.getValue());
+                ParamsInject.AddFormBodyBuilder(mFormBodyBuild,entry.getKey(), entry.getValue());
             }
         }
         //添加请求头
         Headers.Builder mHeaderBuild = new Headers.Builder();
         if (headers != null) {
-            for (Map.Entry<String, Object> entry : headers.urlParams.entrySet()) {
+            for (Map.Entry<String, String> entry : headers.urlParams.entrySet()) {
                 mHeaderBuild.add(entry.getKey(), entry.getValue());
             }
         }
@@ -227,18 +226,18 @@ public class CommonRequest {
         return createputRequest(url, params, null,false);
     }
 
-    public static Request createputRequest(String url, RequestParams params, RequestParams headers, boolean isDev) {
+    public static Request createputRequest(String url, RequestParams params, HeaderParams headers, boolean isDev) {
         FormBody.Builder mFormBodyBuild = new FormBody.Builder();
         if (params != null) {
             for (Map.Entry<String, Object> entry : params.urlParams.entrySet()) {
                 //将请求参数遍历添加到我们的请求构建类中
-                mFormBodyBuild.add(entry.getKey(), entry.getValue());
+                ParamsInject.AddFormBodyBuilder(mFormBodyBuild,entry.getKey(), entry.getValue());
             }
         }
         //添加请求头
         Headers.Builder mHeaderBuild = new Headers.Builder();
         if (headers != null) {
-            for (Map.Entry<String, Object> entry : headers.urlParams.entrySet()) {
+            for (Map.Entry<String, String> entry : headers.urlParams.entrySet()) {
                 mHeaderBuild.add(entry.getKey(), entry.getValue());
             }
         }
@@ -256,15 +255,15 @@ public class CommonRequest {
         return request;
     }
 
-    public static Request createHeadRequest(String url, RequestParams headers) {
+    public static Request createHeadRequest(String url, HeaderParams headers) {
         return createHeadRequest(url, headers,false);
     }
 
-    public static Request createHeadRequest(String url, RequestParams headers, boolean isDev) {
+    public static Request createHeadRequest(String url, HeaderParams headers, boolean isDev) {
         //添加请求头
         Headers.Builder mHeaderBuild = new Headers.Builder();
         if (headers != null) {
-            for (Map.Entry<String, Object> entry : headers.urlParams.entrySet()) {
+            for (Map.Entry<String, String> entry : headers.urlParams.entrySet()) {
                 mHeaderBuild.add(entry.getKey(), entry.getValue());
             }
         }
@@ -287,7 +286,7 @@ public class CommonRequest {
      * @param params 参数
      * @return request
      */
-    public static Request createDownloadRequest(String url, RequestParams params, RequestParams headers, boolean isDev) {
+    public static Request createDownloadRequest(String url, RequestParams params, HeaderParams headers, boolean isDev) {
         headers.put("Accept-Encoding","identity");
         return createGetRequest(url,params,headers,isDev);
     }
