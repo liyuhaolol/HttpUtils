@@ -13,6 +13,7 @@ import okhttp3.Call;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import spa.lyh.cn.lib_https.cookie.SimpleCookieJar;
+import spa.lyh.cn.lib_https.filter.BaseHttpFilter;
 import spa.lyh.cn.lib_https.https.HttpsUtils;
 import spa.lyh.cn.lib_https.listener.DisposeDataHandle;
 import spa.lyh.cn.lib_https.response.CommonFileCallback;
@@ -28,6 +29,7 @@ public class HttpClient {
     public final static int OVERWRITE_FIRST = 1;
     public final static int ADD_ONLY = 2;
     private OkHttpClient mOkHttpClient;
+    private BaseHttpFilter httpFilter;//拦截器
 
     private static HttpClient instance;
 
@@ -68,6 +70,14 @@ public class HttpClient {
 
     public OkHttpClient getOkHttpClient() {
         return mOkHttpClient;
+    }
+
+    public BaseHttpFilter getHttpFilter() {
+        return httpFilter;
+    }
+
+    public void setHttpFilter(BaseHttpFilter httpFilter) {
+        this.httpFilter = httpFilter;
     }
 
     /**
