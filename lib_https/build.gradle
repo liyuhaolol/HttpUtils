@@ -34,15 +34,15 @@ dependencies {
     implementation "androidx.documentfile:documentfile:${versions.documentfile}"
 }
 
-/*afterEvaluate {
+afterEvaluate {
     publishing {
         publications{
             release(MavenPublication) {
                 from components.release
                 groupId = 'com.github.liyuhaolol'
                 artifactId = 'HttpUtils'
-                version = '1.1.9'
+                version = versions.versionName
             }
         }
     }
-}*/
+}
