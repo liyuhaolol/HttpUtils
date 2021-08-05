@@ -1,7 +1,7 @@
 ext {
     versions = [
-            versionCode : 22,
-            versionName : '1.2.1',
+            versionCode : 23,
+            versionName : '1.2.2',
 
             okhttp : '4.9.1',
             fastjson : '1.1.72.android',
