@@ -19,6 +19,7 @@ import spa.lyh.cn.lib_https.listener.DisposeDataListener;
 import spa.lyh.cn.lib_https.listener.DisposeHandleCookieListener;
 import spa.lyh.cn.lib_https.log.LyhLog;
 import spa.lyh.cn.lib_https.response.base.CommonBase;
+import spa.lyh.cn.lib_https.utils.LogUtils;
 
 /**
  * @author liyuhao
@@ -73,7 +74,7 @@ public class CommonJsonCallback extends CommonBase implements Callback {
         mDeliveryHandler.post(new Runnable() {
             @Override
             public void run() {
-                handleResponse(response.headers(),result);
+                handleResponse(response.request().url().toString(),response.headers(),result);
                 /**
                  * handle the cookie
                  */
@@ -94,14 +95,14 @@ public class CommonJsonCallback extends CommonBase implements Callback {
         return tempList;
     }
 
-    private void handleResponse(Headers headerData,Object bodyData) {
+    private void handleResponse(String url,Headers headerData,Object bodyData) {
         if (bodyData == null || bodyData.toString().trim().equals("")) {
             mListener.onFailure(new OkHttpException(OkHttpException.NETWORK_ERROR, EMPTY_MSG));//网络错误
             return;
         }
         //是否在控制台打印信息
         if (devMode){
-            LyhLog.e(TAG,bodyData.toString());
+            LyhLog.e(TAG, LogUtils.makeResponseLog(url,bodyData.toString()));
         }
 
         try {

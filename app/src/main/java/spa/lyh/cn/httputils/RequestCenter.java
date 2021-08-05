@@ -29,7 +29,7 @@ public class RequestCenter {
         RequestParams bodyParams = new RequestParams();
         bodyParams.put("versionType", "1");
         bodyParams.put("channelType", "XiaoMi");
-        ArrayList<String> arrayList = new ArrayList<>();
+        /*ArrayList<String> arrayList = new ArrayList<>();
         arrayList.add("1");
         arrayList.add("2");
         arrayList.add("3");
@@ -41,7 +41,7 @@ public class RequestCenter {
         bodyParams.put("list",list);
         String[] strings = new String[]{"1","2","3"};
         bodyParams.put("strings",strings);
-        bodyParams.put("string...",b);
+        bodyParams.put("string...",b);*/
         Call call = RequestCenter.postRequest(activity, "http://app.jrlamei.com/jrlmCMS/forApp/getChannelNewVersion.jspx", bodyParams, null, listener, null);
     }
 

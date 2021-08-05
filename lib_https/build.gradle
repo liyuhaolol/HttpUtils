@@ -1,7 +1,8 @@
-apply plugin: 'com.android.library'
-apply plugin: 'com.github.dcendents.android-maven'
+plugins {
+    id 'com.android.library'
+    id 'maven-publish'
+}
 
-group = "com.github.liyuhaolol"
 android {
     compileSdkVersion 30
 
@@ -9,8 +10,6 @@ android {
     defaultConfig {
         minSdkVersion 21
         targetSdkVersion 30
-        versionCode versions.versionCode
-        versionName versions.versionName
         consumerProguardFiles 'consumer-rules.pro'
     }
 
@@ -31,3 +30,14 @@ dependencies {
     implementation "org.conscrypt:conscrypt-android:${versions.conscrypt}"
     implementation "androidx.documentfile:documentfile:${versions.documentfile}"
 }
+
+/*afterEvaluate {
+    publishing {
+        release(MavenPublication) {
+            from components.release
+            groupid = ''
+            artifactId = ''
+            version = ''
+        }
+    }
+}*/

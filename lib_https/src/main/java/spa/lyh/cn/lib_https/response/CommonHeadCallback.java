@@ -16,6 +16,7 @@ import spa.lyh.cn.lib_https.listener.DisposeHandleCookieListener;
 import spa.lyh.cn.lib_https.listener.DisposeHeadListener;
 import spa.lyh.cn.lib_https.log.LyhLog;
 import spa.lyh.cn.lib_https.response.base.CommonBase;
+import spa.lyh.cn.lib_https.utils.LogUtils;
 
 public class CommonHeadCallback extends CommonBase implements Callback {
 
@@ -61,7 +62,7 @@ public class CommonHeadCallback extends CommonBase implements Callback {
         mDeliveryHandler.post(new Runnable() {
             @Override
             public void run() {
-                handleHeaders(response.headers());
+                handleHeaders(response.request().url().toString(),response.headers());
                 /**
                  * handle the cookie
                  */
@@ -82,14 +83,14 @@ public class CommonHeadCallback extends CommonBase implements Callback {
         return tempList;
     }
 
-    private void handleHeaders(Headers headerData) {
+    private void handleHeaders(String url,Headers headerData) {
         if (headerData == null || headerData.toString().trim().equals("")) {
             mListener.onFailure(new OkHttpException(OkHttpException.NETWORK_ERROR, EMPTY_MSG));//网络错误
             return;
         }
         //是否在控制台打印信息
         if (devMode){
-            LyhLog.e(TAG,headerData.toString());
+            LyhLog.e(TAG, LogUtils.makeHeaderLog(url, headerData.toString()));
         }
 
         mListener.onSuccess(headerData);
