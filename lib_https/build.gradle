@@ -34,7 +34,7 @@ dependencies {
     implementation "androidx.documentfile:documentfile:${versions.documentfile}"
 }
 
-/*afterEvaluate {
+afterEvaluate {
     publishing {
         publications{
             release(MavenPublication) {
@@ -45,4 +45,4 @@ dependencies {
             }
         }
     }
-}*/
+}
