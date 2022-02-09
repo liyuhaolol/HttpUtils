@@ -26,8 +26,10 @@ public class CommonHeadCallback extends CommonBase implements Callback {
     private Handler mDeliveryHandler;
     private DisposeHeadListener mListener;
     private boolean devMode;
+    private long requestTime;
 
     public CommonHeadCallback(DisposeDataHandle handle) {
+        requestTime = System.currentTimeMillis();
         this.mListener = handle.headListener;
         this.devMode = handle.devMode;
         this.mDeliveryHandler = new Handler(Looper.getMainLooper());
@@ -90,7 +92,9 @@ public class CommonHeadCallback extends CommonBase implements Callback {
         }
         //是否在控制台打印信息
         if (devMode){
-            LyhLog.e(TAG, LogUtils.makeHeaderLog(url, headerData.toString()));
+            long finishTime = System.currentTimeMillis();
+            long time = finishTime - requestTime;
+            LyhLog.e(TAG, LogUtils.makeHeaderLog(url, headerData.toString(),time+"ms"));
         }
 
         mListener.onSuccess(headerData);

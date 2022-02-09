@@ -57,7 +57,10 @@ public class CommonFileCallback extends CommonBase implements Callback {
     private Context context;
     private int mod;
 
+    private long requestTime;
+
     public CommonFileCallback(Context context,DisposeDataHandle handle,int mod) {
+        requestTime = System.currentTimeMillis();
         this.mListener = handle.downloadListener;
         this.mFilePath = handle.mSource;
         this.devMode = handle.devMode;
@@ -74,6 +77,9 @@ public class CommonFileCallback extends CommonBase implements Callback {
                     case SUCCESS_MESSAGE:
                         Success success = (Success) msg.obj;
                         if (devMode){
+                            long finishTime = System.currentTimeMillis();
+                            long time = finishTime - requestTime;
+                            Log.e(TAG,"下载时长:"+time+"ms");
                             Log.e(TAG,"文件名:"+success.getFileName());
                             Log.e(TAG,"文件路径:"+success.getFilePath());
                         }

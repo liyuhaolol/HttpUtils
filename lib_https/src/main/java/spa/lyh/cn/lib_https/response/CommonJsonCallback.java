@@ -2,6 +2,7 @@ package spa.lyh.cn.lib_https.response;
 
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.TypeReference;
@@ -37,8 +38,10 @@ public class CommonJsonCallback extends CommonBase implements Callback {
     private DisposeDataListener mListener;
     private TypeReference<?> typeReference;
     private boolean devMode;
+    private long requestTime;
 
     public CommonJsonCallback(DisposeDataHandle handle) {
+        requestTime = System.currentTimeMillis();
         this.mListener = handle.mListener;
         this.typeReference = handle.typeReference;
         this.devMode = handle.devMode;
@@ -102,7 +105,9 @@ public class CommonJsonCallback extends CommonBase implements Callback {
         }
         //是否在控制台打印信息
         if (devMode){
-            LyhLog.e(TAG, LogUtils.makeResponseLog(url,bodyData.toString()));
+            long finishTime = System.currentTimeMillis();
+            long time = finishTime - requestTime;
+            LyhLog.e(TAG, LogUtils.makeResponseLog(url,bodyData.toString(),time+"ms"));
         }
 
         try {
