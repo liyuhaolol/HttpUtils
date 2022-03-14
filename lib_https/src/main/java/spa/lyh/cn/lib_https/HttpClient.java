@@ -79,6 +79,7 @@ public class HttpClient {
     public void setHttpFilter(BaseHttpFilter httpFilter) {
         this.httpFilter = httpFilter;
     }
+    //public Call createRequest(Request request, ){}
 
     /**
      * 通过构造好的Request,Callback去发送请求

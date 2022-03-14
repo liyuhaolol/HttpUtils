@@ -16,7 +16,7 @@ import spa.lyh.cn.lib_https.request.HeaderParams;
 import spa.lyh.cn.lib_https.request.RequestParams;
 import spa.lyh.cn.utils_io.IOUtils;
 
-public class ThreadPool extends Thread{
+public class MultiPartThreadPool extends Thread{
     private ExecutorService service;
 
     private Handler handler;
@@ -31,7 +31,7 @@ public class ThreadPool extends Thread{
     private HeaderParams headerParams;
     private int mode;
 
-    public ThreadPool(Context context, Handler handler, Object res, int threads, long chunks, int pieceSize, String fileName, String url, RequestParams bodyParams, HeaderParams headerParams){
+    public MultiPartThreadPool(Context context, Handler handler, Object res, int threads, long chunks, int pieceSize, String fileName, String url, RequestParams bodyParams, HeaderParams headerParams){
         this.handler = handler;
         this.res = res;
         this.threads = threads;

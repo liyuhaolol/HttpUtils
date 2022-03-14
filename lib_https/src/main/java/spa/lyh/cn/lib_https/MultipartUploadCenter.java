@@ -22,7 +22,7 @@ import spa.lyh.cn.lib_https.listener.DisposeDataListener;
 import spa.lyh.cn.lib_https.listener.UploadTaskListener;
 import spa.lyh.cn.lib_https.model.Progress;
 import spa.lyh.cn.lib_https.model.Result;
-import spa.lyh.cn.lib_https.multipart.ThreadPool;
+import spa.lyh.cn.lib_https.multipart.MultiPartThreadPool;
 import spa.lyh.cn.lib_https.request.CommonRequest;
 import spa.lyh.cn.lib_https.request.HeaderParams;
 import spa.lyh.cn.lib_https.request.RequestParams;
@@ -129,7 +129,7 @@ public class MultipartUploadCenter {
 
     private Context context;
 
-    private ThreadPool pool;//线程池
+    private MultiPartThreadPool pool;//线程池
 
     private Object res;
 
@@ -309,13 +309,13 @@ public class MultipartUploadCenter {
         if (checkCanStart()){
             if (pool == null){
                 showFileinfo();
-                pool = new ThreadPool(context,handler,res,number,chunks,pieceSize,fileName,uploadUrl,bodyParams,headerParams);
+                pool = new MultiPartThreadPool(context,handler,res,number,chunks,pieceSize,fileName,uploadUrl,bodyParams,headerParams);
                 pool.start();
                 sendMsg(MULT_PART_PROGRESS,0);
             }else {
                 if (!pool.isAlive()){
                     showFileinfo();
-                    pool = new ThreadPool(context,handler,res,number,chunks,pieceSize,fileName,uploadUrl,bodyParams,headerParams);
+                    pool = new MultiPartThreadPool(context,handler,res,number,chunks,pieceSize,fileName,uploadUrl,bodyParams,headerParams);
                     pool.start();
                     sendMsg(MULT_PART_PROGRESS,0);
                 }else {

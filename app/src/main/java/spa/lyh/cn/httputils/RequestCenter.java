@@ -140,4 +140,7 @@ public class RequestCenter {
         return call;
     }
 
+
+    protected static void startRequestPool(){}
+
 }
