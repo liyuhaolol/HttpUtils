@@ -12,7 +12,6 @@ import okhttp3.Headers;
 import okhttp3.Response;
 import spa.lyh.cn.lib_https.exception.OkHttpException;
 import spa.lyh.cn.lib_https.listener.DisposeDataHandle;
-import spa.lyh.cn.lib_https.listener.DisposeHandleCookieListener;
 import spa.lyh.cn.lib_https.listener.DisposeHeadListener;
 import spa.lyh.cn.lib_https.log.LyhLog;
 import spa.lyh.cn.lib_https.response.base.CommonBase;
@@ -59,23 +58,15 @@ public class CommonHeadCallback extends CommonBase implements Callback {
 
     @Override
     public void onResponse(final Call call, final Response response) throws IOException {
-
-        final ArrayList<String> cookieLists = handleCookie(response.headers());
         mDeliveryHandler.post(new Runnable() {
             @Override
             public void run() {
                 handleHeaders(response.request().url().toString(),response.headers());
-                /**
-                 * handle the cookie
-                 */
-                if (mListener instanceof DisposeHandleCookieListener) {
-                    ((DisposeHandleCookieListener) mListener).onCookie(cookieLists);
-                }
             }
         });
     }
 
-    private ArrayList<String> handleCookie(Headers headers) {
+/*    private ArrayList<String> handleCookie(Headers headers) {
         ArrayList<String> tempList = new ArrayList<String>();
         for (int i = 0; i < headers.size(); i++) {
             if (headers.name(i).equalsIgnoreCase(COOKIE_STORE)) {
@@ -83,7 +74,7 @@ public class CommonHeadCallback extends CommonBase implements Callback {
             }
         }
         return tempList;
-    }
+    }*/
 
     private void handleHeaders(String url,Headers headerData) {
         if (headerData == null || headerData.toString().trim().equals("")) {

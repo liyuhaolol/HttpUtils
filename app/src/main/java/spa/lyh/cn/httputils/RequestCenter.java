@@ -1,11 +1,13 @@
 package spa.lyh.cn.httputils;
 
 import android.app.Activity;
+import android.content.Context;
 
 import com.alibaba.fastjson.TypeReference;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import okhttp3.Call;
 import okhttp3.Headers;
@@ -140,7 +142,17 @@ public class RequestCenter {
         return call;
     }
 
-
-    protected static void startRequestPool(){}
+    protected static Call createVersionRequest(Context context){
+        RequestParams bodyParams = new RequestParams();
+        bodyParams.put("versionType", "1");
+        bodyParams.put("channelType", "XiaoMi");
+        Call call = HttpClient.getInstance(context).createRequest(
+                CommonRequest.createPostRequest(
+                        "http://app.jrlamei.com/jrlmCMS/forApp/getChannelNewVersion.jspx?big=",
+                        bodyParams,
+                        null,
+                        BuildConfig.DEBUG));
+        return call;
+    }
 
 }
