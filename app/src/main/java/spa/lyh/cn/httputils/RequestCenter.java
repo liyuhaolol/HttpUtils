@@ -2,6 +2,7 @@ package spa.lyh.cn.httputils;
 
 import android.app.Activity;
 import android.content.Context;
+import android.net.Uri;
 
 import com.alibaba.fastjson.TypeReference;
 
@@ -142,17 +143,20 @@ public class RequestCenter {
         return call;
     }
 
-    protected static Call createVersionRequest(Context context){
+    public static Call createVersionRequest(Context context){
         RequestParams bodyParams = new RequestParams();
         bodyParams.put("versionType", "1");
         bodyParams.put("channelType", "XiaoMi");
-        Call call = HttpClient.getInstance(context).createRequest(
-                CommonRequest.createPostRequest(
-                        "http://app.jrlamei.com/jrlmCMS/forApp/getChannelNewVersion.jspx?big=",
-                        bodyParams,
-                        null,
-                        BuildConfig.DEBUG));
-        return call;
+        return createPostRequest(
+                context,
+                "http://app.jrlamei.com/jrlmCMS/forApp/getChannelNewVersion.jspx",
+                bodyParams,
+                null,
+                BuildConfig.DEBUG);
+    }
+
+    protected static Call createPostRequest(Context context,String url, RequestParams params, HeaderParams headers,boolean isDev){
+        return HttpClient.getInstance(context).createRequest(CommonRequest.createPostRequest(url,params,headers,isDev));
     }
 
 }
