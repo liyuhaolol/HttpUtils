@@ -215,27 +215,46 @@ public class MainActivity extends AppCompatActivity {
         listCall.add(call3);
         listCall.add(call4);
         listCall.add(call5);
-/*        listCall.add(call6);
-        listCall.add(call7);
-        listCall.add(call8);
-        listCall.add(call9);
-        listCall.add(call10);*/
+        List<MultiCall> listCall2 = new ArrayList<>();
+        listCall2.add(call6);
+        listCall2.add(call7);
+        listCall2.add(call8);
+        listCall2.add(call9);
+        listCall2.add(call10);
 
-        MultiRequestCenter.getInstance()
+        MultiRequestCenter
+                .get()
                 .setDevMode(BuildConfig.DEBUG)
                 .addRequests(listCall)
                 .startTasks(new RequestResultListener() {
                     @Override
                     public void onFinish() {
-                        Log.e("qwer","请求池任务结束");
+                        Log.e("qwer","请求池任务结束1");
                         text.setText(msg);
                     }
 
                     @Override
                     public void onCancel() {
-                        Log.e("qwer","取消请求池");
+                        Log.e("qwer","取消请求池1");
                     }
                 });
+
+/*        MultiRequestCenter
+                .get()
+                .setDevMode(BuildConfig.DEBUG)
+                .addRequests(listCall2)
+                .startTasks(new RequestResultListener() {
+                    @Override
+                    public void onFinish() {
+                        Log.e("qwer","请求池任务结束2");
+                        text.setText(msg);
+                    }
+
+                    @Override
+                    public void onCancel() {
+                        Log.e("qwer","取消请求池2");
+                    }
+                });*/
     }
 
     public static Call downloadFile(Context context, String url, String path, int mod, DisposeDownloadListener listener) {

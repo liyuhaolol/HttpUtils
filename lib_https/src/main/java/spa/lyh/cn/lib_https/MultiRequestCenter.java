@@ -62,17 +62,8 @@ public class MultiRequestCenter {
       }
    });
 
-   private static MultiRequestCenter instance;
-
-   public static MultiRequestCenter getInstance(){
-      if (instance == null){
-         synchronized (MultiRequestCenter.class){
-            if (instance == null){
-               instance = new MultiRequestCenter();
-            }
-         }
-      }
-      return instance;
+   public static MultiRequestCenter get(){
+      return new MultiRequestCenter();
    }
 
    public MultiRequestCenter(){
