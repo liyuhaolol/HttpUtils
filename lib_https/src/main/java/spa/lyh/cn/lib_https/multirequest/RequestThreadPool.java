@@ -36,7 +36,7 @@ public class RequestThreadPool extends Thread{
         super.run();
         service = Executors.newFixedThreadPool(threads);
         for (int i = 0;i < listCall.size(); i++){
-            service.execute(new RequestThread(context,listCall.get(i),devMode));
+            service.execute(new RequestThread(context,handler,listCall.get(i),devMode));
         }
         service.shutdown();
         while (!service.isTerminated()){

@@ -3,6 +3,7 @@ package spa.lyh.cn.lib_https.multirequest;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.Message;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -14,6 +15,7 @@ import java.io.IOException;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
 import spa.lyh.cn.lib_https.HttpClient;
+import spa.lyh.cn.lib_https.MultiRequestCenter;
 import spa.lyh.cn.lib_https.exception.OkHttpException;
 import spa.lyh.cn.lib_https.log.LyhLog;
 import spa.lyh.cn.lib_https.response.base.CommonBase;
@@ -23,16 +25,19 @@ public class RequestThread extends Thread implements Runnable{
 
    private MultiCall multiCall;
    volatile boolean shouldLock = true;
+   volatile boolean allowFinish = true;
    private Handler handler;
+   private Handler questHandler;
    private String mResponse;
    private boolean devMode;
    private long requestTime;
    private Context context;
 
-   public RequestThread(Context context,MultiCall call,boolean devMode){
+   public RequestThread(Context context,Handler handler,MultiCall call,boolean devMode){
       this.context = context;
       this.multiCall = call;
-      handler = new Handler(Looper.getMainLooper());
+      this.questHandler = handler;
+      this.handler = new Handler(Looper.getMainLooper());
       this.devMode = devMode;
    }
 
@@ -48,7 +53,7 @@ public class RequestThread extends Thread implements Runnable{
             handler.post(new Runnable() {
                @Override
                public void run() {
-                  multiCall.listener.onFailure(new OkHttpException(OkHttpException.NETWORK_ERROR, CommonBase.NET_MSG));
+                  allowFinish = multiCall.listener.onFailure(new OkHttpException(OkHttpException.NETWORK_ERROR, CommonBase.NET_MSG));
                   shouldLock = false;
                }
             });
@@ -58,6 +63,17 @@ public class RequestThread extends Thread implements Runnable{
       }
       while (shouldLock){
          //线程阻塞
+      }
+      Message msg = Message.obtain();
+      msg.what = MultiRequestCenter.TASK_STOP_FINISH;
+      if (allowFinish){
+         msg.arg1 = 1;
+      }else {
+         msg.arg1 = 0;
+      }
+
+      if (questHandler != null){
+         questHandler.sendMessage(msg);
       }
       release();
    }
@@ -74,7 +90,7 @@ public class RequestThread extends Thread implements Runnable{
             handler.post(new Runnable() {
                @Override
                public void run() {
-                  multiCall.listener.onFailure(new OkHttpException(OkHttpException.NETWORK_ERROR, CommonBase.NET_MSG));
+                  allowFinish = multiCall.listener.onFailure(new OkHttpException(OkHttpException.NETWORK_ERROR, CommonBase.NET_MSG));
                   shouldLock = false;
                }
             });
@@ -109,7 +125,7 @@ public class RequestThread extends Thread implements Runnable{
                            sendToListener = HttpClient.getInstance(context).getHttpFilter().dataFilter(context,execute.request().url().toString(),execute.headers(),mResponse);
                         }
                         if (sendToListener){
-                           multiCall.listener.onSuccess(execute.headers(),mResponse);
+                           allowFinish = multiCall.listener.onSuccess(execute.headers(),mResponse);
                         }
                         shouldLock = false;
                      }
@@ -132,7 +148,7 @@ public class RequestThread extends Thread implements Runnable{
                            sendToListener = HttpClient.getInstance(context).getHttpFilter().dataFilter(context,execute.request().url().toString(),execute.headers(),mResponse);
                         }
                         if (sendToListener){
-                           multiCall.listener.onSuccess(execute.headers(),realResult);
+                           allowFinish = multiCall.listener.onSuccess(execute.headers(),realResult);
                         }
                         shouldLock = false;
                      }
@@ -145,7 +161,7 @@ public class RequestThread extends Thread implements Runnable{
                   handler.post(new Runnable() {
                      @Override
                      public void run() {
-                        multiCall.listener.onFailure(new OkHttpException(OkHttpException.OTHER_ERROR, CommonBase.EMPTY_MSG));
+                        allowFinish = multiCall.listener.onFailure(new OkHttpException(OkHttpException.OTHER_ERROR, CommonBase.EMPTY_MSG));
                         shouldLock = false;
                      }
                   });
@@ -160,7 +176,7 @@ public class RequestThread extends Thread implements Runnable{
                handler.post(new Runnable() {
                   @Override
                   public void run() {
-                     multiCall.listener.onFailure(new OkHttpException(OkHttpException.JSON_ERROR, CommonBase.JSON_MSG_TYPEREFERENCE));
+                     allowFinish = multiCall.listener.onFailure(new OkHttpException(OkHttpException.JSON_ERROR, CommonBase.JSON_MSG_TYPEREFERENCE));
                      shouldLock = false;
                   }
                });
@@ -173,7 +189,7 @@ public class RequestThread extends Thread implements Runnable{
             handler.post(new Runnable() {
                @Override
                public void run() {
-                  multiCall.listener.onFailure(new OkHttpException(OkHttpException.NETWORK_ERROR, CommonBase.EMPTY_MSG));
+                  allowFinish = multiCall.listener.onFailure(new OkHttpException(OkHttpException.NETWORK_ERROR, CommonBase.EMPTY_MSG));
                   shouldLock = false;
                }
             });
@@ -190,5 +206,7 @@ public class RequestThread extends Thread implements Runnable{
       multiCall = null;
       devMode = false;
       context = null;
+      allowFinish = true;
+      questHandler = null;
    }
 }

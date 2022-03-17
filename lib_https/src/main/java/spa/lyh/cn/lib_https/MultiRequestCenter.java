@@ -19,6 +19,7 @@ public class MultiRequestCenter {
    public final static String TAG = "MultiRequestCenter";
    public final static int TASK_SUCCESS = 2000;//任务完成
    public final static int TASK_CANCAL = 2001;//任务取消
+   public final static int TASK_STOP_FINISH = 2002;//任务被禁止完成
 
    private int number = 5;//线程并发数
 
@@ -34,19 +35,31 @@ public class MultiRequestCenter {
 
    private Context context;
 
+   private boolean allowFinish = true;
+
    private final Handler handler = new Handler(new Handler.Callback() {
       @Override
       public boolean handleMessage(@NonNull Message msg) {
          switch (msg.what){
             case TASK_SUCCESS:
                if (listener != null){
-                  new Handler(Looper.getMainLooper()).post(new Runnable() {
-                     @Override
-                     public void run() {
-                        listener.onFinish();
-                        release();
-                     }
-                  });
+                  if (allowFinish){
+                     new Handler(Looper.getMainLooper()).post(new Runnable() {
+                        @Override
+                        public void run() {
+                           listener.onFinish();
+                           release();
+                        }
+                     });
+                  }else {
+                     new Handler(Looper.getMainLooper()).post(new Runnable() {
+                        @Override
+                        public void run() {
+                           listener.onTermination();//有任务阻止整体结束
+                           release();
+                        }
+                     });
+                  }
                }
                break;
             case TASK_CANCAL:
@@ -58,6 +71,16 @@ public class MultiRequestCenter {
                         release();
                      }
                   });
+               }
+               break;
+            case TASK_STOP_FINISH:
+               if (allowFinish){
+                  //默认是true，但是如果有1个false，则永远为false
+                  if (msg.arg1 == 1){
+                     allowFinish = true;
+                  }else {
+                     allowFinish = false;
+                  }
                }
                break;
          }
@@ -172,6 +195,8 @@ public class MultiRequestCenter {
       listener = null;
 
       context = null;
+
+      allowFinish = true;
 
    }
 }

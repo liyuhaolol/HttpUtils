@@ -4,5 +4,7 @@ public interface RequestResultListener {
 
  void onFinish();
 
+ void onTermination();
+
  void onCancel();
 }
