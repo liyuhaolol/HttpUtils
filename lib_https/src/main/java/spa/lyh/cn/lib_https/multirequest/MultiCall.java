@@ -9,10 +9,12 @@ public class MultiCall {
    public Call call;
    public DisposeDataListener listener;
    public TypeReference<?> typeReference;
+   public boolean useHttpFilter;
 
-   public MultiCall(Call call,TypeReference<?> typeReference, DisposeDataListener listener){
+   public MultiCall(Call call,TypeReference<?> typeReference,boolean useHttpFilter, DisposeDataListener listener){
       this.call = call;
       this.listener = listener;
+      this.useHttpFilter = useHttpFilter;
       this.typeReference = typeReference;
    }
 }

@@ -13,6 +13,7 @@ import java.io.IOException;
 
 import okhttp3.Response;
 import okhttp3.ResponseBody;
+import spa.lyh.cn.lib_https.HttpClient;
 import spa.lyh.cn.lib_https.exception.OkHttpException;
 import spa.lyh.cn.lib_https.log.LyhLog;
 import spa.lyh.cn.lib_https.response.base.CommonBase;
@@ -26,8 +27,10 @@ public class RequestThread extends Thread implements Runnable{
    private String mResponse;
    private boolean devMode;
    private long requestTime;
+   private Context context;
 
-   public RequestThread(MultiCall call,boolean devMode){
+   public RequestThread(Context context,MultiCall call,boolean devMode){
+      this.context = context;
       this.multiCall = call;
       handler = new Handler(Looper.getMainLooper());
       this.devMode = devMode;
@@ -101,7 +104,13 @@ public class RequestThread extends Thread implements Runnable{
                   handler.post(new Runnable() {
                      @Override
                      public void run() {
-                        multiCall.listener.onSuccess(execute.headers(),mResponse);
+                        boolean sendToListener = true;
+                        if (HttpClient.getInstance(context).getHttpFilter() != null && multiCall.useHttpFilter){
+                           sendToListener = HttpClient.getInstance(context).getHttpFilter().dataFilter(context,execute.request().url().toString(),execute.headers(),mResponse);
+                        }
+                        if (sendToListener){
+                           multiCall.listener.onSuccess(execute.headers(),mResponse);
+                        }
                         shouldLock = false;
                      }
                   });
@@ -118,7 +127,13 @@ public class RequestThread extends Thread implements Runnable{
                   handler.post(new Runnable() {
                      @Override
                      public void run() {
-                        multiCall.listener.onSuccess(execute.headers(),realResult);
+                        boolean sendToListener = true;
+                        if (HttpClient.getInstance(context).getHttpFilter() != null && multiCall.useHttpFilter){
+                           sendToListener = HttpClient.getInstance(context).getHttpFilter().dataFilter(context,execute.request().url().toString(),execute.headers(),mResponse);
+                        }
+                        if (sendToListener){
+                           multiCall.listener.onSuccess(execute.headers(),realResult);
+                        }
                         shouldLock = false;
                      }
                   });
@@ -174,5 +189,6 @@ public class RequestThread extends Thread implements Runnable{
       shouldLock = true;
       multiCall = null;
       devMode = false;
+      context = null;
    }
 }

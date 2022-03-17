@@ -1,5 +1,6 @@
 package spa.lyh.cn.lib_https;
 
+import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
@@ -30,6 +31,8 @@ public class MultiRequestCenter {
    private boolean devMode;
 
    private RequestResultListener listener;
+
+   private Context context;
 
    private final Handler handler = new Handler(new Handler.Callback() {
       @Override
@@ -62,12 +65,13 @@ public class MultiRequestCenter {
       }
    });
 
-   public static MultiRequestCenter get(){
-      return new MultiRequestCenter();
+   public static MultiRequestCenter get(Context context){
+      return new MultiRequestCenter(context);
    }
 
-   public MultiRequestCenter(){
+   public MultiRequestCenter(Context context){
       requestList = new ArrayList<>();
+      this.context = context;
    }
 
    public MultiRequestCenter setDevMode(boolean devMode){
@@ -102,11 +106,11 @@ public class MultiRequestCenter {
       this.listener = listener;
       if (checkCanStart()){
          if (pool == null){
-            pool = new RequestThreadPool(handler,number,requestList,devMode);
+            pool = new RequestThreadPool(context,handler,number,requestList,devMode);
             pool.start();
          }else {
             if (!pool.isAlive()){
-               pool = new RequestThreadPool(handler,number,requestList,devMode);
+               pool = new RequestThreadPool(context,handler,number,requestList,devMode);
                pool.start();
             }else {
                Log.e(TAG,"任务正在进行，请不要重复启动");
@@ -166,6 +170,8 @@ public class MultiRequestCenter {
       devMode = false;
 
       listener = null;
+
+      context = null;
 
    }
 }

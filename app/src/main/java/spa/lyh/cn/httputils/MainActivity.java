@@ -94,7 +94,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });*/
         ///////请求池
-        MultiCall call1 = new MultiCall(RequestCenter.createVersionRequest(this), null, new DisposeDataListener() {
+        MultiCall call1 = new MultiCall(RequestCenter.createVersionRequest(this), null,true, new DisposeDataListener() {
             @Override
             public void onSuccess(Headers headerData, Object bodyData) {
                 Log.e("qwer","完成1");
@@ -105,7 +105,7 @@ public class MainActivity extends AppCompatActivity {
                 Log.e("qwer","失败1");
             }
         });
-        MultiCall call2 = new MultiCall(RequestCenter.createVersionRequest(this), new TypeReference<JsonFromServer<UpdateInfo>>(){}, new DisposeDataListener() {
+        MultiCall call2 = new MultiCall(RequestCenter.createVersionRequest(this), new TypeReference<JsonFromServer<UpdateInfo>>(){},true, new DisposeDataListener() {
             @Override
             public void onSuccess(Headers headerData, Object bodyData) {
                 Log.e("qwer","完成2");
@@ -119,7 +119,7 @@ public class MainActivity extends AppCompatActivity {
                 Log.e("qwer","失败2");
             }
         });
-        MultiCall call3 = new MultiCall(RequestCenter.createVersionRequest(this), null, new DisposeDataListener() {
+        MultiCall call3 = new MultiCall(RequestCenter.createVersionRequest(this), null,false, new DisposeDataListener() {
             @Override
             public void onSuccess(Headers headerData, Object bodyData) {
                 Log.e("qwer","完成3");
@@ -131,7 +131,7 @@ public class MainActivity extends AppCompatActivity {
                 Log.e("qwer","失败3");
             }
         });
-        MultiCall call4 = new MultiCall(RequestCenter.createVersionRequest(this), null, new DisposeDataListener() {
+        MultiCall call4 = new MultiCall(RequestCenter.createVersionRequest(this), null, true,new DisposeDataListener() {
             @Override
             public void onSuccess(Headers headerData, Object bodyData) {
                 Log.e("qwer","完成4");
@@ -142,7 +142,7 @@ public class MainActivity extends AppCompatActivity {
                 Log.e("qwer","失败4");
             }
         });
-        MultiCall call5 = new MultiCall(RequestCenter.createVersionRequest(this), null, new DisposeDataListener() {
+        MultiCall call5 = new MultiCall(RequestCenter.createVersionRequest(this), null, false,new DisposeDataListener() {
             @Override
             public void onSuccess(Headers headerData, Object bodyData) {
                 Log.e("qwer","完成5");
@@ -153,7 +153,7 @@ public class MainActivity extends AppCompatActivity {
                 Log.e("qwer","失败5");
             }
         });
-        MultiCall call6 = new MultiCall(RequestCenter.createVersionRequest(this), null, new DisposeDataListener() {
+        MultiCall call6 = new MultiCall(RequestCenter.createVersionRequest(this), null, false,new DisposeDataListener() {
             @Override
             public void onSuccess(Headers headerData, Object bodyData) {
                 Log.e("qwer","完成6");
@@ -164,7 +164,7 @@ public class MainActivity extends AppCompatActivity {
                 Log.e("qwer","失败6");
             }
         });
-        MultiCall call7 = new MultiCall(RequestCenter.createVersionRequest(this), null, new DisposeDataListener() {
+        MultiCall call7 = new MultiCall(RequestCenter.createVersionRequest(this), null,true, new DisposeDataListener() {
             @Override
             public void onSuccess(Headers headerData, Object bodyData) {
                 Log.e("qwer","完成7");
@@ -175,7 +175,7 @@ public class MainActivity extends AppCompatActivity {
                 Log.e("qwer","失败7");
             }
         });
-        MultiCall call8 = new MultiCall(RequestCenter.createVersionRequest(this), null, new DisposeDataListener() {
+        MultiCall call8 = new MultiCall(RequestCenter.createVersionRequest(this), null, true,new DisposeDataListener() {
             @Override
             public void onSuccess(Headers headerData, Object bodyData) {
                 Log.e("qwer","完成8");
@@ -186,7 +186,7 @@ public class MainActivity extends AppCompatActivity {
                 Log.e("qwer","失败8");
             }
         });
-        MultiCall call9 = new MultiCall(RequestCenter.createVersionRequest(this), null, new DisposeDataListener() {
+        MultiCall call9 = new MultiCall(RequestCenter.createVersionRequest(this), null, false,new DisposeDataListener() {
             @Override
             public void onSuccess(Headers headerData, Object bodyData) {
                 Log.e("qwer","完成9");
@@ -197,7 +197,7 @@ public class MainActivity extends AppCompatActivity {
                 Log.e("qwer","失败9");
             }
         });
-        MultiCall call10 = new MultiCall(RequestCenter.createVersionRequest(this), null, new DisposeDataListener() {
+        MultiCall call10 = new MultiCall(RequestCenter.createVersionRequest(this), null,false,new DisposeDataListener() {
             @Override
             public void onSuccess(Headers headerData, Object bodyData) {
                 Log.e("qwer","完成10");
@@ -223,7 +223,7 @@ public class MainActivity extends AppCompatActivity {
         listCall2.add(call10);
 
         MultiRequestCenter
-                .get()
+                .get(this)
                 .setDevMode(BuildConfig.DEBUG)
                 .addRequests(listCall)
                 .startTasks(new RequestResultListener() {
@@ -239,8 +239,8 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
 
-/*        MultiRequestCenter
-                .get()
+        MultiRequestCenter
+                .get(this)
                 .setDevMode(BuildConfig.DEBUG)
                 .addRequests(listCall2)
                 .startTasks(new RequestResultListener() {
@@ -254,7 +254,7 @@ public class MainActivity extends AppCompatActivity {
                     public void onCancel() {
                         Log.e("qwer","取消请求池2");
                     }
-                });*/
+                });
     }
 
     public static Call downloadFile(Context context, String url, String path, int mod, DisposeDownloadListener listener) {

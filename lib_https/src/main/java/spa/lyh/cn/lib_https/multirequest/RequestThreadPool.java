@@ -18,15 +18,17 @@ public class RequestThreadPool extends Thread{
     private int threads;
     private int mode;
     private boolean devMode;
+    private Context context;
 
     private List<MultiCall> listCall;
 
-    public RequestThreadPool(Handler handler, int threads,List<MultiCall> listCall,boolean devMode){
+    public RequestThreadPool(Context context,Handler handler, int threads,List<MultiCall> listCall,boolean devMode){
         this.handler = handler;
         this.threads = threads;
         this.listCall = new ArrayList<>();
         this.listCall.addAll(listCall);
         this.devMode = devMode;
+        this.context = context;
     }
 
     @Override
@@ -34,7 +36,7 @@ public class RequestThreadPool extends Thread{
         super.run();
         service = Executors.newFixedThreadPool(threads);
         for (int i = 0;i < listCall.size(); i++){
-            service.execute(new RequestThread(listCall.get(i),devMode));
+            service.execute(new RequestThread(context,listCall.get(i),devMode));
         }
         service.shutdown();
         while (!service.isTerminated()){
@@ -74,5 +76,6 @@ public class RequestThreadPool extends Thread{
         handler = null;
         mode = 0;
         listCall.clear();
+        context = null;
     }
 }
