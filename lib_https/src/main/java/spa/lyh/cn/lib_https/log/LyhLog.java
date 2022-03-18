@@ -2,10 +2,9 @@ package spa.lyh.cn.lib_https.log;
 
 import android.util.Log;
 
+//这玩意是为了解决Android自带的Log.e无法在logcat上打印极长的String的问题
 public class LyhLog {
     private static final int STRING_MAXLENGTH = 1000; //Log单行的最大长度
-    private static int STRING_START = 0;
-    private static int STRING_END = 1000;
 
     private static String TAG = "log_util";
 
@@ -43,11 +42,10 @@ public class LyhLog {
 
     public static void handleMessage(int level, String tag, String message) {
         TAG = tag;
-        STRING_START = 0;
-        STRING_END = 1000;
+        int STRING_START = 0;
         int msg_difference = message.length() - STRING_MAXLENGTH;
         if (msg_difference > 0) {
-            STRING_END = STRING_MAXLENGTH;
+            int STRING_END = STRING_MAXLENGTH;
             for (;;) {
                 showLog(level, tag, message.substring(STRING_START, STRING_END));
                 STRING_START = STRING_END;
