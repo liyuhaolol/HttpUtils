@@ -41,22 +41,26 @@ public class LyhLog {
     }
 
     public static void handleMessage(int level, String tag, String message) {
-        TAG = tag;
-        int STRING_START = 0;
-        int msg_difference = message.length() - STRING_MAXLENGTH;
-        if (msg_difference > 0) {
-            int STRING_END = STRING_MAXLENGTH;
-            for (;;) {
-                showLog(level, tag, message.substring(STRING_START, STRING_END));
-                STRING_START = STRING_END;
-                STRING_END += STRING_MAXLENGTH;
-                if (STRING_END >= message.length()) {
-                    showLog(level, TAG, message.substring(STRING_START));
-                    return;
+        try{
+            TAG = tag;
+            int STRING_START = 0;
+            int msg_difference = message.length() - STRING_MAXLENGTH;
+            if (msg_difference > 0) {
+                int STRING_END = STRING_MAXLENGTH;
+                for (;;) {
+                    showLog(level, tag, message.substring(STRING_START, STRING_END));
+                    STRING_START = STRING_END;
+                    STRING_END += STRING_MAXLENGTH;
+                    if (STRING_END >= message.length()) {
+                        showLog(level, TAG, message.substring(STRING_START));
+                        return;
+                    }
                 }
+            } else {
+                showLog(level, tag, message);
             }
-        } else {
-            showLog(level, tag, message);
+        }catch (Exception e){
+            e.printStackTrace();
         }
     }
 
