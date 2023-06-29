@@ -8,8 +8,6 @@ import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.alibaba.fastjson.TypeReference;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -46,8 +44,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onSuccess(Headers headerData,Object responseObj) {
                 Toast.makeText(MainActivity.this,headerData.get("Content-Type"), Toast.LENGTH_SHORT).show();
-                msg = (String) responseObj;
-                text.setText(msg);
+                JsonFromServer<UpdateInfo> jsonF = (JsonFromServer<UpdateInfo>) responseObj;
+                text.setText(jsonF.toString());
             }
 
             @Override
@@ -55,7 +53,7 @@ public class MainActivity extends AppCompatActivity {
                 OkHttpException exception = (OkHttpException) reasonObj;
                 text.setText(exception.getEmsg());
             }
-        },"","haha");
+        });
 
         /*downloadFile(this,
                 "https://ss0.bdstatic.com/70cFvHSh_Q1YnxGkpoWK1HF6hhy/it/u=3208238474,2536510412&fm=26&gp=0.jpg",

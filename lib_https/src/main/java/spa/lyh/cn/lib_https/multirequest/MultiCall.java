@@ -1,6 +1,7 @@
 package spa.lyh.cn.lib_https.multirequest;
 
-import com.alibaba.fastjson.TypeReference;
+
+import com.alibaba.fastjson2.TypeReference;
 
 import okhttp3.Call;
 import spa.lyh.cn.lib_https.listener.DisposeDataListener;

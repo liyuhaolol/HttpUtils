@@ -8,4 +8,15 @@ public class JsonFromServer<T> implements Serializable{
    public String msg;
    public T data;
    public T info;
+
+
+   @Override
+   public String toString() {
+      return "JsonFromServer{" +
+              "code=" + code +
+              ", msg='" + msg + '\'' +
+              ", data=" + data +
+              ", info=" + info +
+              '}';
+   }
 }

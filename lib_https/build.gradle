@@ -4,12 +4,13 @@ plugins {
 }
 
 android {
-    compileSdkVersion 30
+    namespace 'spa.lyh.cn.lib_https'
+    compileSdkVersion 33
 
 
     defaultConfig {
         minSdkVersion 21
-        targetSdkVersion 30
+        targetSdkVersion 33
         consumerProguardFiles 'consumer-rules.pro'
     }
 
@@ -17,6 +18,11 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    publishing {
+        singleVariant('release') {
+            withSourcesJar()
         }
     }
     compileOptions{
@@ -28,7 +34,7 @@ android {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     api "com.squareup.okhttp3:okhttp:${versions.okhttp}"
-    api "com.alibaba:fastjson:${versions.fastjson}"
+    api "com.alibaba.fastjson2:fastjson2:${versions.fastjson}"
     api "com.github.liyuhaolol:IO:${versions.lib_io}"
     implementation "org.conscrypt:conscrypt-android:${versions.conscrypt}"
     implementation "androidx.documentfile:documentfile:${versions.documentfile}"

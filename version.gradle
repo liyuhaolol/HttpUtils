@@ -3,11 +3,11 @@ ext {
             versionCode : 32,
             versionName : '1.3.1',
 
-            okhttp : '4.9.1',
-            fastjson : '1.1.72.android',
+            okhttp : '4.11.0',
+            fastjson : '2.0.34.1.android4',
             lib_io : '1.1.1',
-            conscrypt : '2.4.0',
-            documentfile : '1.0.1'
+            conscrypt : '2.5.2',
+            documentfile : '1.0.1'//1.1.0-alpha01需要最低SDK31
 
 
     ]

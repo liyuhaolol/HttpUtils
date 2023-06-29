@@ -5,7 +5,8 @@ import android.os.Handler;
 import android.os.Message;
 import android.text.TextUtils;
 
-import com.alibaba.fastjson.JSONObject;
+
+import com.alibaba.fastjson2.JSONObject;
 
 import java.io.FileInputStream;
 import java.io.IOException;

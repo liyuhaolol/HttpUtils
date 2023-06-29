@@ -4,7 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.net.Uri;
 
-import com.alibaba.fastjson.TypeReference;
+import com.alibaba.fastjson2.TypeReference;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,6 +12,8 @@ import java.util.Random;
 
 import okhttp3.Call;
 import okhttp3.Headers;
+import spa.lyh.cn.httputils.model.JsonFromServer;
+import spa.lyh.cn.httputils.model.UpdateInfo;
 import spa.lyh.cn.lib_https.HttpClient;
 import spa.lyh.cn.lib_https.listener.DisposeDataHandle;
 import spa.lyh.cn.lib_https.listener.DisposeDataListener;
@@ -28,24 +30,13 @@ public class RequestCenter {
      * @param activity
      * @param listener
      */
-    public static void getNewVersion(Activity activity, DisposeDataListener listener,String... b) {
+    public static void getNewVersion(Activity activity, DisposeDataListener listener) {
         RequestParams bodyParams = new RequestParams();
-        bodyParams.put("versionType", "1");
-        bodyParams.put("channelType", "XiaoMi");
-        /*ArrayList<String> arrayList = new ArrayList<>();
-        arrayList.add("1");
-        arrayList.add("2");
-        arrayList.add("3");
-        bodyParams.put("arrayList",arrayList);
-        List<String> list = new ArrayList<>();
-        list.add("1");
-        list.add("2");
-        list.add("3");
-        bodyParams.put("list",list);
-        String[] strings = new String[]{"1","2","3"};
-        bodyParams.put("strings",strings);
-        bodyParams.put("string...",b);*/
-        Call call = RequestCenter.postRequest(activity, "http://app.jrlamei.com/jrlmCMS/forApp/getChannelNewVersion.jspx", bodyParams, null, listener, null);
+        bodyParams.put("appType", "1");
+        bodyParams.put("siteId", "924958456908492800");
+        TypeReference typeReference = new TypeReference<JsonFromServer<UpdateInfo>>() {
+        };
+        Call call = RequestCenter.postRequest(activity, "https://ums.offshoremedia.net/app/versionInfo", bodyParams, null, listener, typeReference);
     }
 
 
