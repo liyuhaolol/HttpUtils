@@ -42,7 +42,7 @@ public class MainActivity extends AppCompatActivity {
         text = findViewById(R.id.text);
         progress_tv = findViewById(R.id.progress);
 
-/*        RequestCenter.getNewVersion(this, new DisposeDataListener() {
+        RequestCenter.getNewVersion(this, new DisposeDataListener() {
             @Override
             public void onSuccess(Headers headerData,Object responseObj) {
                 Toast.makeText(MainActivity.this,headerData.get("Content-Type"), Toast.LENGTH_SHORT).show();
@@ -55,7 +55,7 @@ public class MainActivity extends AppCompatActivity {
                 OkHttpException exception = (OkHttpException) reasonObj;
                 text.setText(exception.getEmsg());
             }
-        },"","haha");*/
+        },"","haha");
 
         /*downloadFile(this,
                 "https://ss0.bdstatic.com/70cFvHSh_Q1YnxGkpoWK1HF6hhy/it/u=3208238474,2536510412&fm=26&gp=0.jpg",
@@ -95,7 +95,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });*/
         ///////请求池
-        MultiCall call1 = new MultiCall(RequestCenter.createVersionRequest(this), null, true, new DisposeMultiDataListener() {
+        /*MultiCall call1 = new MultiCall(RequestCenter.createVersionRequest(this), null, true, new DisposeMultiDataListener() {
             @Override
             public boolean onSuccess(Headers headerData, Object bodyData) {
                 Log.e("qwer","完成1");
@@ -285,7 +285,19 @@ public class MainActivity extends AppCompatActivity {
                     public void onCancel() {
                         Log.e("qwer","取消请求池2");
                     }
-                });
+                });*/
+
+/*        RequestCenter.headRequest(this, "https://m.newsduan.com/web/resource/img/logo.png?version=20220310", null, new DisposeHeadListener() {
+            @Override
+            public void onSuccess(Headers headerData) {
+                Log.e("qwer",headerData.get("Content-Type"));
+            }
+
+            @Override
+            public void onFailure(Object error) {
+
+            }
+        });*/
     }
 
     public static Call downloadFile(Context context, String url, String path, int mod, DisposeDownloadListener listener) {
