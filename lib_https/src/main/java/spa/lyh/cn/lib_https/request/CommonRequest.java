@@ -8,8 +8,10 @@ import java.util.Map;
 
 import okhttp3.FormBody;
 import okhttp3.Headers;
+import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.Request;
+import okhttp3.RequestBody;
 import spa.lyh.cn.lib_https.listener.UploadProgressListener;
 import spa.lyh.cn.lib_https.model.FilePart;
 
@@ -59,6 +61,47 @@ public class CommonRequest {
         }
         Request request = new Request.Builder().url(url).
                 post(mFormBody).
+                headers(mHeader)
+                .build();
+        return request;
+    }
+
+    /**
+     * create the key-value Request
+     *
+     * @param url 链接
+     * @param json 参数
+     * @return request
+     */
+     public static Request createPostJsonRequest(String url, String json){
+        return createPostJsonRequest(url,json,null,false);
+     }
+
+    /**可以带请求头的Post请求
+     * @param url 链接
+     * @param json 参数
+     * @param headers 头文件
+     * @return request
+     */
+    public static Request createPostJsonRequest(String url, String json, HeaderParams headers, boolean isDev){
+        // 设置请求体的Content-Type为application/json
+        MediaType mediaType = MediaType.parse("application/json; charset=utf-8");
+        RequestBody jsonBody = RequestBody.create(json, mediaType);
+
+        //添加请求头
+        Headers.Builder mHeaderBuild = new Headers.Builder();
+        if (headers != null) {
+            for (Map.Entry<String, String> entry : headers.urlParams.entrySet()) {
+                mHeaderBuild.add(entry.getKey(), entry.getValue());
+            }
+        }
+        //生成header
+        Headers mHeader = mHeaderBuild.build();
+        if (isDev){
+            Log.e("WebUrl",url);
+        }
+        Request request = new Request.Builder().url(url).
+                post(jsonBody).
                 headers(mHeader)
                 .build();
         return request;
