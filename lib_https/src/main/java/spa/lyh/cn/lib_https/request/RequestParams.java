@@ -17,34 +17,6 @@ public class RequestParams {
      */
     public RequestParams(){}
 
-    /**
-     * Constructs a new RequestParams instance containing the key/value string
-     * params from the specified map.
-     *
-     * @param source the source key/value string map to add.
-     */
-    public RequestParams(Map<String, String> source) {
-        if (source != null) {
-            for (Map.Entry<String, String> entry : source.entrySet()) {
-                put(entry.getKey(), entry.getValue());
-            }
-        }
-    }
-
-    /**
-     * Constructs a new RequestParams instance and populate it with a single
-     * initial key/value string param.
-     *
-     * @param key   the key name for the intial param.
-     * @param value the value string for the initial param.
-     */
-    public RequestParams(final String key, final String value) {
-        this(new HashMap<String, String>() {
-            {
-                put(key, value);
-            }
-        });
-    }
 
     /**
      * Adds a key/value string pair to the request.
@@ -70,6 +42,25 @@ public class RequestParams {
         if (key != null && listValue != null) {
             urlParams.put(key, listValue);
         }
+    }
+
+    public void put(String key, Integer value){
+        urlParams.put(key, value);
+    }
+    public void put(String key, Float value){
+        urlParams.put(key, value);
+    }
+
+    public void put(String key, Double value){
+        urlParams.put(key, value);
+    }
+
+    public void put(String key, Long value){
+        urlParams.put(key, value);
+    }
+
+    public void put(String key, Boolean value){
+        urlParams.put(key, value);
     }
 
     public boolean hasParams() {
