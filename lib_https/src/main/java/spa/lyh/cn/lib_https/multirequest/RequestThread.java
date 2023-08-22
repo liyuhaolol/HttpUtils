@@ -144,7 +144,7 @@ public class RequestThread extends Thread implements Runnable{
                      public void run() {
                         boolean sendToListener = true;
                         if (HttpClient.getInstance(context).getHttpFilter() != null && multiCall.useHttpFilter){
-                           sendToListener = HttpClient.getInstance(context).getHttpFilter().dataFilter(context,execute.request().url().toString(),execute.headers(),mResponse);
+                           sendToListener = HttpClient.getInstance(context).getHttpFilter().dataFilter(context,execute.request().url().toString(),execute.headers(),realResult);
                         }
                         if (sendToListener){
                            allowFinish = multiCall.listener.onSuccess(execute.headers(),realResult);
