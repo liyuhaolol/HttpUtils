@@ -265,11 +265,39 @@ public class CommonRequest {
         return request;
     }
 
-    public static Request createPutRequest(String url, RequestParams params) {
-        return createputRequest(url, params, null,false);
+    public static Request createDeleteJsonRequest(String url, String json){
+        return createDeleteJsonRequest(url,json,null,false);
     }
 
-    public static Request createputRequest(String url, RequestParams params, HeaderParams headers, boolean isDev) {
+    public static Request createDeleteJsonRequest(String url, String json, HeaderParams headers, boolean isDev){
+        // 设置请求体的Content-Type为application/json
+        MediaType mediaType = MediaType.parse("application/json; charset=utf-8");
+        RequestBody jsonBody = RequestBody.create(json, mediaType);
+
+        //添加请求头
+        Headers.Builder mHeaderBuild = new Headers.Builder();
+        if (headers != null) {
+            for (Map.Entry<String, String> entry : headers.urlParams.entrySet()) {
+                mHeaderBuild.add(entry.getKey(), entry.getValue());
+            }
+        }
+        //生成header
+        Headers mHeader = mHeaderBuild.build();
+        if (isDev){
+            Log.e("WebUrl",url);
+        }
+        Request request = new Request.Builder().url(url).
+                delete(jsonBody).
+                headers(mHeader)
+                .build();
+        return request;
+    }
+
+    public static Request createPutRequest(String url, RequestParams params) {
+        return createPutRequest(url, params, null,false);
+    }
+
+    public static Request createPutRequest(String url, RequestParams params, HeaderParams headers, boolean isDev) {
         FormBody.Builder mFormBodyBuild = new FormBody.Builder();
         if (params != null) {
             for (Map.Entry<String, Object> entry : params.urlParams.entrySet()) {
@@ -293,6 +321,34 @@ public class CommonRequest {
         }
         Request request = new Request.Builder().url(url)
                 .put(mFormBody)
+                .headers(mHeader)
+                .build();
+        return request;
+    }
+
+    public static Request createPutJsonRequest(String url, String json) {
+        return createPutJsonRequest(url, json, null,false);
+    }
+
+    public static Request createPutJsonRequest(String url, String json, HeaderParams headers, boolean isDev) {
+        // 设置请求体的Content-Type为application/json
+        MediaType mediaType = MediaType.parse("application/json; charset=utf-8");
+        RequestBody jsonBody = RequestBody.create(json, mediaType);
+
+        //添加请求头
+        Headers.Builder mHeaderBuild = new Headers.Builder();
+        if (headers != null) {
+            for (Map.Entry<String, String> entry : headers.urlParams.entrySet()) {
+                mHeaderBuild.add(entry.getKey(), entry.getValue());
+            }
+        }
+        //生成header
+        Headers mHeader = mHeaderBuild.build();
+        if (isDev){
+            Log.e("WebUrl",url);
+        }
+        Request request = new Request.Builder().url(url)
+                .put(jsonBody)
                 .headers(mHeader)
                 .build();
         return request;
