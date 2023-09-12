@@ -125,6 +125,8 @@ public class RequestThread extends Thread implements Runnable{
                         }
                         if (sendToListener){
                            allowFinish = multiCall.listener.onSuccess(execute.headers(),mResponse);
+                        }else{
+                           allowFinish = false;
                         }
                         shouldLock = false;
                      }
@@ -148,6 +150,8 @@ public class RequestThread extends Thread implements Runnable{
                         }
                         if (sendToListener){
                            allowFinish = multiCall.listener.onSuccess(execute.headers(),realResult);
+                        }else{
+                           allowFinish = false;
                         }
                         shouldLock = false;
                      }
