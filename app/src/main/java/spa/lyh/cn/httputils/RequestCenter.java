@@ -36,7 +36,7 @@ public class RequestCenter {
         bodyParams.put("siteId", "924958456908492800");
         TypeReference typeReference = new TypeReference<JsonFromServer<UpdateInfo>>() {
         };
-        Call call = RequestCenter.postRequest(activity, "https://ums.offshoremedia.net/app/versionInfo", bodyParams, null, listener, typeReference);
+        Call call = RequestCenter.postRequest(activity, "http://ums.offshoremedia.net/app/versionInfo", bodyParams, null, listener, typeReference);
     }
 
 
