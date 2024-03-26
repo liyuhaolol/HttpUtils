@@ -3,7 +3,7 @@ ext {
             versionCode : 39,
             versionName : '1.4.6',
 
-            okhttp : '4.11.0',
+            okhttp : '4.12.0',
             fastjson : '2.0.34.1.android4',
             lib_io : '1.1.2',
             conscrypt : '2.5.2',
