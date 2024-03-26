@@ -1,4 +1,4 @@
-## 1.4.7版本，迁移到`mavenCentral`
+## 1.4.7版本，迁移到`mavenCentral`,okhttp升级为4.12.0,IO升级到mavenCentral库版本
 ## 1.4.6版本，例行升级IO底层框架
 ## 1.4.5版本，修正filter的返回code错误问题
 ## 1.4.4版本，PUT和DELETE请求增加json格式的请求
