@@ -10,7 +10,7 @@ plugins {
 
 android {
     namespace = "spa.lyh.cn.lib_https"
-    compileSdk = 34
+    compileSdk = 35
 
 
     defaultConfig {

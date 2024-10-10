@@ -1,3 +1,4 @@
+## 1.4.9版本，例行升级IO底层框架
 ## 1.4.8版本，修正namespace有误的问题
 ## 1.4.7版本，迁移到`mavenCentral`,okhttp升级为4.12.0,IO升级到mavenCentral库版本
 ## 1.4.6版本，例行升级IO底层框架

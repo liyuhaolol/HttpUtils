@@ -4,11 +4,11 @@ plugins {
 
 android {
     namespace 'spa.lyh.cn.httputils'
-    compileSdk 34
+    compileSdk 35
     defaultConfig {
         applicationId "spa.lyh.cn.httputils"
         minSdk 21
-        targetSdk 34
+        targetSdk 35
         versionCode 1
         versionName "1.0"
     }
