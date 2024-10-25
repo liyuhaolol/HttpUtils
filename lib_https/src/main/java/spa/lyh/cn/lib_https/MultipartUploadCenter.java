@@ -18,7 +18,7 @@ import java.text.DecimalFormat;
 
 import okhttp3.Headers;
 import spa.lyh.cn.lib_https.listener.DisposeDataHandle;
-import spa.lyh.cn.lib_https.listener.DisposeDataListener;
+import spa.lyh.cn.lib_https.listener.DisposeJsonListener;
 import spa.lyh.cn.lib_https.listener.UploadTaskListener;
 import spa.lyh.cn.lib_https.model.Progress;
 import spa.lyh.cn.lib_https.model.Result;
@@ -357,7 +357,7 @@ public class MultipartUploadCenter {
     private void mergeTask(){
         //合并接口
         TypeReference typeReference = new TypeReference<Result>(){};
-        HttpClient.getInstance(context).sendResquest(CommonRequest.createGetRequest(mergeUrl,bodyParams,headerParams,isDev),new DisposeDataHandle(new DisposeDataListener() {
+        HttpClient.getInstance(context).sendResquest(CommonRequest.createGetRequest(mergeUrl,bodyParams,headerParams,isDev),new DisposeDataHandle(new DisposeJsonListener() {
             @Override
             public void onSuccess(Headers headerData, Object bodyData) {
                 Result result = (Result) bodyData;
@@ -379,7 +379,7 @@ public class MultipartUploadCenter {
             public void onFailure(Object reasonObj) {
                 sendMsg(MultipartUploadCenter.MERGE_FAIL,MERGE_MSG);
             }
-        }, typeReference, isDev));
+        }, isDev));
     }
 
     private void release(){

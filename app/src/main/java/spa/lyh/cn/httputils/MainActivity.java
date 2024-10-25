@@ -8,26 +8,18 @@ import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.alibaba.fastjson2.JSONObject;
 
 import okhttp3.Call;
 import okhttp3.Headers;
-import spa.lyh.cn.httputils.model.JsonFromServer;
 import spa.lyh.cn.httputils.model.UpdateInfo;
 import spa.lyh.cn.lib_https.HttpClient;
-import spa.lyh.cn.lib_https.MultiRequestCenter;
 import spa.lyh.cn.lib_https.exception.OkHttpException;
 import spa.lyh.cn.lib_https.listener.DisposeDataHandle;
-import spa.lyh.cn.lib_https.listener.DisposeDataListener;
+import spa.lyh.cn.lib_https.listener.DisposeJsonListener;
 import spa.lyh.cn.lib_https.listener.DisposeDownloadListener;
-import spa.lyh.cn.lib_https.listener.DisposeHeadListener;
-import spa.lyh.cn.lib_https.listener.DisposeMultiDataListener;
-import spa.lyh.cn.lib_https.listener.RequestResultListener;
-import spa.lyh.cn.lib_https.multirequest.MultiCall;
 import spa.lyh.cn.lib_https.request.CommonRequest;
 import spa.lyh.cn.lib_https.request.HeaderParams;
-import spa.lyh.cn.lib_https.request.RequestParams;
 
 public class MainActivity extends AppCompatActivity {
     TextView text,progress_tv;
@@ -40,12 +32,19 @@ public class MainActivity extends AppCompatActivity {
         text = findViewById(R.id.text);
         progress_tv = findViewById(R.id.progress);
 
-        RequestCenter.getNewVersion(this, new DisposeDataListener() {
+        RequestCenter.getNewVersion(this, new DisposeJsonListener() {
             @Override
             public void onSuccess(Headers headerData,Object responseObj) {
                 Toast.makeText(MainActivity.this,headerData.get("Content-Type"), Toast.LENGTH_SHORT).show();
-                JsonFromServer<UpdateInfo> jsonF = (JsonFromServer<UpdateInfo>) responseObj;
-                text.setText(jsonF.toString());
+                text.setText(responseObj.toString());
+                //JsonFromServer<UpdateInfo> jsonF = (JsonFromServer<UpdateInfo>) responseObj;
+                String jsonString = (String) responseObj;
+                JSONObject jsonObject = JSONObject.parseObject(jsonString);
+                if (jsonObject.getInteger("code") == 200){
+                    Log.e("qwer","成功");
+                    UpdateInfo info = jsonObject.getJSONObject("info").toJavaObject(UpdateInfo.class);
+                    Log.e("qwer",info.getAppDescription());
+                }
             }
 
             @Override

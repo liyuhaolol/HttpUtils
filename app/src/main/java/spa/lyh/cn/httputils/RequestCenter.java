@@ -2,21 +2,14 @@ package spa.lyh.cn.httputils;
 
 import android.app.Activity;
 import android.content.Context;
-import android.net.Uri;
 
 import com.alibaba.fastjson2.TypeReference;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-
 import okhttp3.Call;
 import okhttp3.Headers;
-import spa.lyh.cn.httputils.model.JsonFromServer;
-import spa.lyh.cn.httputils.model.UpdateInfo;
 import spa.lyh.cn.lib_https.HttpClient;
 import spa.lyh.cn.lib_https.listener.DisposeDataHandle;
-import spa.lyh.cn.lib_https.listener.DisposeDataListener;
+import spa.lyh.cn.lib_https.listener.DisposeJsonListener;
 import spa.lyh.cn.lib_https.listener.DisposeHeadListener;
 import spa.lyh.cn.lib_https.request.CommonRequest;
 import spa.lyh.cn.lib_https.request.HeaderParams;
@@ -30,22 +23,21 @@ public class RequestCenter {
      * @param activity
      * @param listener
      */
-    public static void getNewVersion(Activity activity, DisposeDataListener listener) {
+    public static void getNewVersion(Activity activity, DisposeJsonListener listener) {
         RequestParams bodyParams = new RequestParams();
         bodyParams.put("appType", "1");
         bodyParams.put("siteId", "924958456908492800");
-        TypeReference typeReference = new TypeReference<JsonFromServer<UpdateInfo>>() {
-        };
-        Call call = RequestCenter.postRequest(activity, "http://ums.offshoremedia.net/app/versionInfo", bodyParams, null, listener, typeReference);
+        //TypeReference typeReference = new TypeReference<JsonFromServer<UpdateInfo>>() {};
+        Call call = RequestCenter.postRequest(activity, "http://ums.offshoremedia.net/app/versionInfo", bodyParams, null, listener);
     }
 
 
-    protected static Call postRequest(final Activity activity, String url, RequestParams params, HeaderParams headers, final DisposeDataListener listener, TypeReference<?> typeReference) {
+    protected static Call postRequest(final Activity activity, String url, RequestParams params, HeaderParams headers, final DisposeJsonListener listener) {
         //初始化等待loadDialog并显示
         //final LoadingDialog loadDialog = new LoadingDialog(activity);
         //创建网络请求
         Call call = HttpClient.getInstance(activity).sendResquest(CommonRequest.
-                createPostRequest(url, params, headers, true), new DisposeDataHandle(new DisposeDataListener() {
+                createPostRequest(url, params, headers, true), new DisposeDataHandle(new DisposeJsonListener() {
             @Override
             public void onSuccess(Headers headerData,Object responseObj) {
                 if (!activity.isFinishing()){
@@ -71,17 +63,17 @@ public class RequestCenter {
                     }
                 }
             }
-        }, typeReference, true));
+        }, true));
 
         return call;
     }
 
-    protected static Call getRequest(final Activity activity, String url, RequestParams params, HeaderParams headers, final DisposeDataListener listener, TypeReference<?> typeReference) {
+    protected static Call getRequest(final Activity activity, String url, RequestParams params, HeaderParams headers, final DisposeJsonListener listener, TypeReference<?> typeReference) {
         //初始化等待loadDialog并显示
         //final LoadingDialog loadDialog = new LoadingDialog(activity);
         //创建网络请求
         Call call = HttpClient.getInstance(activity).sendResquest(CommonRequest.
-                createGetRequest(url, params, headers, true), new DisposeDataHandle(new DisposeDataListener() {
+                createGetRequest(url, params, headers, true), new DisposeDataHandle(new DisposeJsonListener() {
             @Override
             public void onSuccess(Headers headerData,Object responseObj) {
                 if (!activity.isFinishing()){
@@ -107,7 +99,7 @@ public class RequestCenter {
                     }
                 }
             }
-        }, typeReference, true));
+        }, true));
 
         return call;
     }

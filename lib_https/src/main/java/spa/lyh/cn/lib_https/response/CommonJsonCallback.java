@@ -5,10 +5,8 @@ import android.os.Looper;
 
 
 import com.alibaba.fastjson2.JSONObject;
-import com.alibaba.fastjson2.TypeReference;
 
 import java.io.IOException;
-import java.util.ArrayList;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -16,7 +14,7 @@ import okhttp3.Headers;
 import okhttp3.Response;
 import spa.lyh.cn.lib_https.exception.OkHttpException;
 import spa.lyh.cn.lib_https.listener.DisposeDataHandle;
-import spa.lyh.cn.lib_https.listener.DisposeDataListener;
+import spa.lyh.cn.lib_https.listener.DisposeJsonListener;
 import spa.lyh.cn.lib_https.log.LyhLog;
 import spa.lyh.cn.lib_https.response.base.CommonBase;
 import spa.lyh.cn.lib_https.utils.LogUtils;
@@ -34,15 +32,13 @@ public class CommonJsonCallback extends CommonBase implements Callback {
      * 将其它线程的数据转发到UI线程
      */
     private Handler mDeliveryHandler;
-    private DisposeDataListener mListener;
-    private TypeReference<?> typeReference;
+    private DisposeJsonListener mListener;
     private boolean devMode;
     private long requestTime;
 
     public CommonJsonCallback(DisposeDataHandle handle) {
         requestTime = System.currentTimeMillis();
         this.mListener = handle.mListener;
-        this.typeReference = handle.typeReference;
         this.devMode = handle.devMode;
         this.mDeliveryHandler = new Handler(Looper.getMainLooper());
     }
@@ -93,13 +89,8 @@ public class CommonJsonCallback extends CommonBase implements Callback {
         }
 
         try {
-            //范型为空时，直接回调成功的字符串
-            if (typeReference == null){
-                mListener.onSuccess(headerData,bodyData.toString());
-                return;
-            }
             //按照范型解析
-            Object realResult = JSONObject.parseObject(bodyData.toString(), typeReference);
+            JSONObject realResult = JSONObject.parseObject(bodyData.toString());
 
             if (realResult != null){
                 mListener.onSuccess(headerData,realResult);
@@ -108,7 +99,7 @@ public class CommonJsonCallback extends CommonBase implements Callback {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            mListener.onFailure(new OkHttpException(OkHttpException.JSON_ERROR,JSON_MSG_TYPEREFERENCE));//json解析错误
+            mListener.onFailure(new OkHttpException(OkHttpException.JSON_ERROR,JSON_CONVERT_ERROR));//json解析错误
         }
     }
 }
