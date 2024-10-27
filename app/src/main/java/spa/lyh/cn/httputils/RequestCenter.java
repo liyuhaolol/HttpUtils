@@ -3,14 +3,17 @@ package spa.lyh.cn.httputils;
 import android.app.Activity;
 import android.content.Context;
 
+import com.alibaba.fastjson2.JSONObject;
 import com.alibaba.fastjson2.TypeReference;
 
 import okhttp3.Call;
 import okhttp3.Headers;
 import spa.lyh.cn.lib_https.HttpClient;
+import spa.lyh.cn.lib_https.exception.OkHttpException;
 import spa.lyh.cn.lib_https.listener.DisposeDataHandle;
 import spa.lyh.cn.lib_https.listener.DisposeJsonListener;
 import spa.lyh.cn.lib_https.listener.DisposeHeadListener;
+import spa.lyh.cn.lib_https.listener.DisposeStringListener;
 import spa.lyh.cn.lib_https.request.CommonRequest;
 import spa.lyh.cn.lib_https.request.HeaderParams;
 import spa.lyh.cn.lib_https.request.RequestParams;
@@ -27,7 +30,13 @@ public class RequestCenter {
         RequestParams bodyParams = new RequestParams();
         bodyParams.put("appType", "1");
         bodyParams.put("siteId", "924958456908492800");
-        //TypeReference typeReference = new TypeReference<JsonFromServer<UpdateInfo>>() {};
+        Call call = RequestCenter.postRequest(activity, "http://ums.offshoremedia.net/app/versionInfo", bodyParams, null, listener);
+    }
+
+    public static void logNewVersion(Activity activity, DisposeStringListener listener) {
+        RequestParams bodyParams = new RequestParams();
+        bodyParams.put("appType", "1");
+        bodyParams.put("siteId", "924958456908492800");
         Call call = RequestCenter.postRequest(activity, "http://ums.offshoremedia.net/app/versionInfo", bodyParams, null, listener);
     }
 
@@ -36,14 +45,14 @@ public class RequestCenter {
         //初始化等待loadDialog并显示
         //final LoadingDialog loadDialog = new LoadingDialog(activity);
         //创建网络请求
-        Call call = HttpClient.getInstance(activity).sendResquest(CommonRequest.
+        Call call = HttpClient.getInstance(activity).sendJsonResquest(CommonRequest.
                 createPostRequest(url, params, headers, true), new DisposeDataHandle(new DisposeJsonListener() {
             @Override
-            public void onSuccess(Headers headerData,Object responseObj) {
+            public void onSuccess(Headers headerData, JSONObject jsonObject) {
                 if (!activity.isFinishing()){
                     if (listener != null){
                         try {
-                            listener.onSuccess(headerData,responseObj);
+                            listener.onSuccess(headerData,jsonObject);
                         }catch (Exception e){
                             e.printStackTrace();
                         }
@@ -52,11 +61,11 @@ public class RequestCenter {
             }
 
             @Override
-            public void onFailure(Object reasonObj) {
+            public void onFailure(OkHttpException error) {
                 if (!activity.isFinishing()) {
                     if (listener != null){
                         try {
-                            listener.onFailure(reasonObj);
+                            listener.onFailure(error);
                         }catch (Exception e){
                             e.printStackTrace();
                         }
@@ -68,18 +77,18 @@ public class RequestCenter {
         return call;
     }
 
-    protected static Call getRequest(final Activity activity, String url, RequestParams params, HeaderParams headers, final DisposeJsonListener listener, TypeReference<?> typeReference) {
+    protected static Call postRequest(final Activity activity, String url, RequestParams params, HeaderParams headers, final DisposeStringListener listener) {
         //初始化等待loadDialog并显示
         //final LoadingDialog loadDialog = new LoadingDialog(activity);
         //创建网络请求
-        Call call = HttpClient.getInstance(activity).sendResquest(CommonRequest.
-                createGetRequest(url, params, headers, true), new DisposeDataHandle(new DisposeJsonListener() {
+        Call call = HttpClient.getInstance(activity).sendStringResquest(CommonRequest.
+                createPostRequest(url, params, headers, true), new DisposeDataHandle(new DisposeStringListener() {
             @Override
-            public void onSuccess(Headers headerData,Object responseObj) {
+            public void onSuccess(Headers headerData, String stringBody) {
                 if (!activity.isFinishing()){
                     if (listener != null){
                         try {
-                            listener.onSuccess(headerData,responseObj);
+                            listener.onSuccess(headerData,stringBody);
                         }catch (Exception e){
                             e.printStackTrace();
                         }
@@ -88,11 +97,11 @@ public class RequestCenter {
             }
 
             @Override
-            public void onFailure(Object reasonObj) {
+            public void onFailure(OkHttpException error) {
                 if (!activity.isFinishing()) {
                     if (listener != null){
                         try {
-                            listener.onFailure(reasonObj);
+                            listener.onFailure(error);
                         }catch (Exception e){
                             e.printStackTrace();
                         }
@@ -103,6 +112,44 @@ public class RequestCenter {
 
         return call;
     }
+
+
+    protected static Call getRequest(final Activity activity, String url, RequestParams params, HeaderParams headers, final DisposeJsonListener listener) {
+        //初始化等待loadDialog并显示
+        //final LoadingDialog loadDialog = new LoadingDialog(activity);
+        //创建网络请求
+        Call call = HttpClient.getInstance(activity).sendJsonResquest(CommonRequest.
+                createGetRequest(url, params, headers, true), new DisposeDataHandle(new DisposeJsonListener() {
+            @Override
+            public void onSuccess(Headers headerData, JSONObject jsonObject) {
+                if (!activity.isFinishing()){
+                    if (listener != null){
+                        try {
+                            listener.onSuccess(headerData,jsonObject);
+                        }catch (Exception e){
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(OkHttpException error) {
+                if (!activity.isFinishing()) {
+                    if (listener != null){
+                        try {
+                            listener.onFailure(error);
+                        }catch (Exception e){
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            }
+        }, true));
+
+        return call;
+    }
+
 
     protected static Call headRequest(final Activity activity, String url, HeaderParams headers, final DisposeHeadListener listener) {
         //创建网络请求
@@ -116,7 +163,7 @@ public class RequestCenter {
             }
 
             @Override
-            public void onFailure(Object error) {
+            public void onFailure(OkHttpException error) {
                 if (listener != null){
                     listener.onFailure(error);
                 }

@@ -52,7 +52,7 @@ public class RequestThread extends Thread implements Runnable{
             handler.post(new Runnable() {
                @Override
                public void run() {
-                  allowFinish = multiCall.listener.onFailure(new OkHttpException(OkHttpException.NETWORK_ERROR, CommonBase.NET_MSG));
+                  allowFinish = multiCall.listener.onFailure(new OkHttpException(OkHttpException.NETWORK_ERROR, CommonBase.NET_MSG,null));
                   shouldLock = false;
                }
             });
@@ -89,7 +89,7 @@ public class RequestThread extends Thread implements Runnable{
             handler.post(new Runnable() {
                @Override
                public void run() {
-                  allowFinish = multiCall.listener.onFailure(new OkHttpException(OkHttpException.NETWORK_ERROR, CommonBase.NET_MSG));
+                  allowFinish = multiCall.listener.onFailure(new OkHttpException(OkHttpException.NETWORK_ERROR, CommonBase.NET_MSG,null));
                   shouldLock = false;
                }
             });
@@ -164,7 +164,7 @@ public class RequestThread extends Thread implements Runnable{
                   handler.post(new Runnable() {
                      @Override
                      public void run() {
-                        allowFinish = multiCall.listener.onFailure(new OkHttpException(OkHttpException.OTHER_ERROR, CommonBase.EMPTY_MSG));
+                        allowFinish = multiCall.listener.onFailure(new OkHttpException(OkHttpException.OTHER_ERROR, CommonBase.EMPTY_MSG,mResponse));
                         shouldLock = false;
                      }
                   });
@@ -179,7 +179,7 @@ public class RequestThread extends Thread implements Runnable{
                handler.post(new Runnable() {
                   @Override
                   public void run() {
-                     allowFinish = multiCall.listener.onFailure(new OkHttpException(OkHttpException.JSON_ERROR, CommonBase.JSON_MSG_TYPEREFERENCE));
+                     allowFinish = multiCall.listener.onFailure(new OkHttpException(OkHttpException.JSON_ERROR, CommonBase.JSON_CONVERT_ERROR,mResponse));
                      shouldLock = false;
                   }
                });
@@ -192,7 +192,7 @@ public class RequestThread extends Thread implements Runnable{
             handler.post(new Runnable() {
                @Override
                public void run() {
-                  allowFinish = multiCall.listener.onFailure(new OkHttpException(OkHttpException.NETWORK_ERROR, CommonBase.EMPTY_MSG));
+                  allowFinish = multiCall.listener.onFailure(new OkHttpException(OkHttpException.NETWORK_ERROR, CommonBase.EMPTY_MSG,null));
                   shouldLock = false;
                }
             });

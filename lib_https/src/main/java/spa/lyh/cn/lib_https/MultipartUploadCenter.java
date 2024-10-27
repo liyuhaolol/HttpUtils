@@ -11,12 +11,14 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.documentfile.provider.DocumentFile;
 
+import com.alibaba.fastjson2.JSONObject;
 import com.alibaba.fastjson2.TypeReference;
 
 import java.io.File;
 import java.text.DecimalFormat;
 
 import okhttp3.Headers;
+import spa.lyh.cn.lib_https.exception.OkHttpException;
 import spa.lyh.cn.lib_https.listener.DisposeDataHandle;
 import spa.lyh.cn.lib_https.listener.DisposeJsonListener;
 import spa.lyh.cn.lib_https.listener.UploadTaskListener;
@@ -356,8 +358,33 @@ public class MultipartUploadCenter {
 
     private void mergeTask(){
         //合并接口
-        TypeReference typeReference = new TypeReference<Result>(){};
-        HttpClient.getInstance(context).sendResquest(CommonRequest.createGetRequest(mergeUrl,bodyParams,headerParams,isDev),new DisposeDataHandle(new DisposeJsonListener() {
+        HttpClient.getInstance(context).sendJsonResquest(CommonRequest.createGetRequest(mergeUrl,bodyParams,headerParams,isDev),new DisposeDataHandle(new DisposeJsonListener() {
+            @Override
+            public void onSuccess(Headers headerData, JSONObject jsonObject) {
+                Result result = jsonObject.toJavaObject(Result.class);
+                if (result.code == 200){
+                    String info;
+                    if (result.info != null && !TextUtils.isEmpty(result.info.url)){
+                        info = result.info.url;
+                    }else {
+                        info = "";
+                    }
+                    sendMsg(MultipartUploadCenter.MERGE_SUCCESS,info);
+
+                }else {
+                    sendMsg(MultipartUploadCenter.MERGE_FAIL,MERGE_MSG+" Code:"+result.code);
+                }
+            }
+
+            @Override
+            public void onFailure(OkHttpException error) {
+                sendMsg(MultipartUploadCenter.MERGE_FAIL,MERGE_MSG);
+            }
+        }, isDev));
+
+
+
+/*        DisposeJsonListener() {
             @Override
             public void onSuccess(Headers headerData, Object bodyData) {
                 Result result = (Result) bodyData;
@@ -379,7 +406,7 @@ public class MultipartUploadCenter {
             public void onFailure(Object reasonObj) {
                 sendMsg(MultipartUploadCenter.MERGE_FAIL,MERGE_MSG);
             }
-        }, isDev));
+        }*/
     }
 
     private void release(){

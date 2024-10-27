@@ -6,9 +6,11 @@ package spa.lyh.cn.lib_https.listener;
  */
 public class DisposeDataHandle {
 
-	public DisposeJsonListener mListener = null;
+	public DisposeJsonListener jsonListener = null;
 	public DisposeDownloadListener downloadListener = null;
 	public DisposeHeadListener headListener = null;
+
+	public DisposeStringListener stringListener = null;
 	public boolean devMode;
 
 	public String mSource = null;
@@ -17,9 +19,10 @@ public class DisposeDataHandle {
 	 * 不指定对应的clazz，应该用不到
 	 * @param listener
 	 */
-	public DisposeDataHandle(DisposeJsonListener listener)
+	public DisposeDataHandle(DisposeStringListener listener,boolean devMode)
 	{
-		this.mListener = listener;
+		this.stringListener = listener;
+		this.devMode = devMode;
 	}
 
 	/**
@@ -29,7 +32,7 @@ public class DisposeDataHandle {
 	 */
 	public DisposeDataHandle(DisposeJsonListener listener, boolean devMode)
 	{
-		this.mListener = listener;
+		this.jsonListener = listener;
 		this.devMode = devMode;
 	}
 

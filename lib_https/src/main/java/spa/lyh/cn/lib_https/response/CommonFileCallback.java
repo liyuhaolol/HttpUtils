@@ -103,9 +103,9 @@ public class CommonFileCallback extends CommonBase implements Callback {
              */
             if (ioexception.getMessage() != null){
                 if (ioexception.getMessage().equals("Canceled")){
-                    mDeliveryHandler.obtainMessage(FAILURE_MESSAGE, new OkHttpException(OkHttpException.CANCEL_REQUEST, CANCEL_MSG)).sendToTarget();
+                    mDeliveryHandler.obtainMessage(FAILURE_MESSAGE, new OkHttpException(OkHttpException.CANCEL_REQUEST, CANCEL_MSG,null)).sendToTarget();
                 }else {
-                    mDeliveryHandler.obtainMessage(FAILURE_MESSAGE, new OkHttpException(OkHttpException.NETWORK_ERROR, NET_MSG)).sendToTarget();
+                    mDeliveryHandler.obtainMessage(FAILURE_MESSAGE, new OkHttpException(OkHttpException.NETWORK_ERROR, NET_MSG,null)).sendToTarget();
                 }
             }
         }
@@ -116,7 +116,7 @@ public class CommonFileCallback extends CommonBase implements Callback {
         if (response.code() == 200){
             handleResponse(response);
         }else {
-            mDeliveryHandler.obtainMessage(FAILURE_MESSAGE, new OkHttpException(OkHttpException.SERVER_ERROR, NET_MSG_CODE+response.code())).sendToTarget();
+            mDeliveryHandler.obtainMessage(FAILURE_MESSAGE, new OkHttpException(OkHttpException.SERVER_ERROR, NET_MSG_CODE+response.code(),response.toString())).sendToTarget();
         }
 
     }
@@ -131,7 +131,7 @@ public class CommonFileCallback extends CommonBase implements Callback {
     private void  handleResponse(Response response){
         if (response == null) {
             //习惯性判空，理论不会空
-            mDeliveryHandler.obtainMessage(FAILURE_MESSAGE, new OkHttpException(OkHttpException.OTHER_ERROR, EMPTY_RESPONSE)).sendToTarget();
+            mDeliveryHandler.obtainMessage(FAILURE_MESSAGE, new OkHttpException(OkHttpException.OTHER_ERROR, EMPTY_RESPONSE,null)).sendToTarget();
             return;
         }
 
@@ -156,7 +156,7 @@ public class CommonFileCallback extends CommonBase implements Callback {
             inputStream  = response.body().byteStream();//输入流
             data = IOUtils.createFileOutputStream(context,mFilePath,filename,mod);
             if (data == null || data.getFos() == null){
-                mDeliveryHandler.obtainMessage(FAILURE_MESSAGE, new OkHttpException(OkHttpException.OTHER_ERROR, EMPTY_RESPONSE)).sendToTarget();
+                mDeliveryHandler.obtainMessage(FAILURE_MESSAGE, new OkHttpException(OkHttpException.OTHER_ERROR, EMPTY_RESPONSE,null)).sendToTarget();
                 return;
             }
             fos = data.getFos();
@@ -212,7 +212,7 @@ public class CommonFileCallback extends CommonBase implements Callback {
 
         } catch (Exception e) {
             e.printStackTrace();
-            mDeliveryHandler.obtainMessage(FAILURE_MESSAGE, new OkHttpException(OkHttpException.IO_ERROR, IO_NET_MSG)).sendToTarget();
+            mDeliveryHandler.obtainMessage(FAILURE_MESSAGE, new OkHttpException(OkHttpException.IO_ERROR, IO_NET_MSG,null)).sendToTarget();
             return;
         } finally {
             try {

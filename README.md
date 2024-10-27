@@ -1,3 +1,4 @@
+## 1.5.0版本，将JSON转换与请求结果类型强绑定解除
 ## 1.4.9版本，例行升级IO底层框架
 ## 1.4.8版本，修正namespace有误的问题
 ## 1.4.7版本，迁移到`mavenCentral`,okhttp升级为4.12.0,IO升级到mavenCentral库版本
@@ -8,4 +9,4 @@
 ## 1.4.2版本，开放RequestParams对象接受，Intager，Float，Double，Long，Boolean对象以应对JsonRequest里的各种基本数据类型。
 ## 1.4.0版本，将fastjson替换为fastjson2，okhttp升级为4.11.0，conscrypt升级为2.5.2
 - 因为升级为fastjson2所以推荐使用本框架的项目，也要将自己的json解析框架升级为fastjson2，不换的话，不保证是否会出现其他问题
-`api "com.alibaba.fastjson2:fastjson2:2.0.34.1.android4"`
+`api "com.alibaba.fastjson2:fastjson2:2.0.53.android5"`

@@ -9,15 +9,18 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.alibaba.fastjson2.JSONObject;
+import com.alibaba.fastjson2.TypeReference;
 
 import okhttp3.Call;
 import okhttp3.Headers;
+import spa.lyh.cn.httputils.model.JsonFromServer;
 import spa.lyh.cn.httputils.model.UpdateInfo;
 import spa.lyh.cn.lib_https.HttpClient;
 import spa.lyh.cn.lib_https.exception.OkHttpException;
 import spa.lyh.cn.lib_https.listener.DisposeDataHandle;
 import spa.lyh.cn.lib_https.listener.DisposeJsonListener;
 import spa.lyh.cn.lib_https.listener.DisposeDownloadListener;
+import spa.lyh.cn.lib_https.listener.DisposeStringListener;
 import spa.lyh.cn.lib_https.request.CommonRequest;
 import spa.lyh.cn.lib_https.request.HeaderParams;
 
@@ -34,23 +37,29 @@ public class MainActivity extends AppCompatActivity {
 
         RequestCenter.getNewVersion(this, new DisposeJsonListener() {
             @Override
-            public void onSuccess(Headers headerData,Object responseObj) {
+            public void onSuccess(Headers headerData, JSONObject jsonObject) {
                 Toast.makeText(MainActivity.this,headerData.get("Content-Type"), Toast.LENGTH_SHORT).show();
-                text.setText(responseObj.toString());
-                //JsonFromServer<UpdateInfo> jsonF = (JsonFromServer<UpdateInfo>) responseObj;
-                String jsonString = (String) responseObj;
-                JSONObject jsonObject = JSONObject.parseObject(jsonString);
-                if (jsonObject.getInteger("code") == 200){
-                    Log.e("qwer","成功");
-                    UpdateInfo info = jsonObject.getJSONObject("info").toJavaObject(UpdateInfo.class);
-                    Log.e("qwer",info.getAppDescription());
-                }
+                TypeReference typeReference = new TypeReference<JsonFromServer<UpdateInfo>>() {};
+                JsonFromServer<UpdateInfo> jsonF = jsonObject.to(typeReference.getType());
+                text.setText(jsonF.toString());
+
             }
 
             @Override
-            public void onFailure(Object reasonObj) {
-                OkHttpException exception = (OkHttpException) reasonObj;
-                text.setText(exception.getEmsg());
+            public void onFailure(OkHttpException error) {
+                text.setText(error.getEmsg());
+            }
+        });
+
+        RequestCenter.logNewVersion(this, new DisposeStringListener() {
+            @Override
+            public void onSuccess(Headers headerData, String stringBody) {
+                Log.e("qwer","打印结果："+stringBody);
+            }
+
+            @Override
+            public void onFailure(OkHttpException error) {
+                Log.e("qwer",error.getEmsg());
             }
         });
 

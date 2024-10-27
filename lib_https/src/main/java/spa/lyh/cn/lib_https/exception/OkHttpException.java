@@ -1,5 +1,10 @@
 package spa.lyh.cn.lib_https.exception;
 
+
+import android.text.TextUtils;
+
+import okhttp3.Response;
+
 /**********************************************************
  * okhttp的exception.
  **********************************************************/
@@ -26,10 +31,18 @@ public class OkHttpException extends Exception {
 	 */
 	private String emsg;
 
+	private String response;
 
-	public OkHttpException(int ecode, String emsg) {
+
+	public OkHttpException(int ecode, String emsg,String response) {
 		this.ecode = ecode;
 		this.emsg = emsg;
+		if (!TextUtils.isEmpty(response)){
+			this.response = response;
+		}else{
+			this.response = "";
+		}
+
 	}
 
 	public int getEcode() {
@@ -38,6 +51,10 @@ public class OkHttpException extends Exception {
 
 	public String getEmsg() {
 		return emsg;
+	}
+
+	public String getResponse() {
+		return response;
 	}
 
 }

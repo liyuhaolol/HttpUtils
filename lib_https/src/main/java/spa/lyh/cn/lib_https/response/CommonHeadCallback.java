@@ -46,9 +46,9 @@ public class CommonHeadCallback extends CommonBase implements Callback {
                 public void run() {
                     if (ioexception.getMessage() != null){
                         if (ioexception.getMessage().equals("Canceled")){
-                            mListener.onFailure(new OkHttpException(OkHttpException.CANCEL_REQUEST, CANCEL_MSG));
+                            mListener.onFailure(new OkHttpException(OkHttpException.CANCEL_REQUEST, CANCEL_MSG,null));
                         }else {
-                            mListener.onFailure(new OkHttpException(OkHttpException.NETWORK_ERROR, NET_MSG));
+                            mListener.onFailure(new OkHttpException(OkHttpException.NETWORK_ERROR, NET_MSG,null));
                         }
                     }
                 }
@@ -78,7 +78,7 @@ public class CommonHeadCallback extends CommonBase implements Callback {
 
     private void handleHeaders(String url,Headers headerData) {
         if (headerData == null || headerData.toString().trim().equals("")) {
-            mListener.onFailure(new OkHttpException(OkHttpException.NETWORK_ERROR, EMPTY_MSG));//网络错误
+            mListener.onFailure(new OkHttpException(OkHttpException.NETWORK_ERROR, EMPTY_MSG,null));//网络错误
             return;
         }
         //是否在控制台打印信息
