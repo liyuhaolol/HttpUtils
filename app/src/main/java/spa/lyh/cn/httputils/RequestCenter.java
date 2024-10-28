@@ -3,6 +3,8 @@ package spa.lyh.cn.httputils;
 import android.app.Activity;
 import android.content.Context;
 
+import androidx.annotation.NonNull;
+
 import com.alibaba.fastjson2.JSONObject;
 import com.alibaba.fastjson2.TypeReference;
 
@@ -11,6 +13,7 @@ import okhttp3.Headers;
 import spa.lyh.cn.lib_https.HttpClient;
 import spa.lyh.cn.lib_https.exception.OkHttpException;
 import spa.lyh.cn.lib_https.listener.DisposeDataHandle;
+import spa.lyh.cn.lib_https.listener.DisposeDownloadListener;
 import spa.lyh.cn.lib_https.listener.DisposeJsonListener;
 import spa.lyh.cn.lib_https.listener.DisposeHeadListener;
 import spa.lyh.cn.lib_https.listener.DisposeStringListener;
@@ -48,7 +51,7 @@ public class RequestCenter {
         Call call = HttpClient.getInstance(activity).sendJsonResquest(CommonRequest.
                 createPostRequest(url, params, headers, true), new DisposeDataHandle(new DisposeJsonListener() {
             @Override
-            public void onSuccess(Headers headerData, JSONObject jsonObject) {
+            public void onSuccess(@NonNull Headers headerData, @NonNull JSONObject jsonObject) {
                 if (!activity.isFinishing()){
                     if (listener != null){
                         try {
@@ -61,7 +64,7 @@ public class RequestCenter {
             }
 
             @Override
-            public void onFailure(OkHttpException error) {
+            public void onFailure(@NonNull OkHttpException error) {
                 if (!activity.isFinishing()) {
                     if (listener != null){
                         try {
@@ -84,7 +87,7 @@ public class RequestCenter {
         Call call = HttpClient.getInstance(activity).sendStringResquest(CommonRequest.
                 createPostRequest(url, params, headers, true), new DisposeDataHandle(new DisposeStringListener() {
             @Override
-            public void onSuccess(Headers headerData, String stringBody) {
+            public void onSuccess(@NonNull Headers headerData, @NonNull String stringBody) {
                 if (!activity.isFinishing()){
                     if (listener != null){
                         try {
@@ -97,7 +100,7 @@ public class RequestCenter {
             }
 
             @Override
-            public void onFailure(OkHttpException error) {
+            public void onFailure(@NonNull OkHttpException error) {
                 if (!activity.isFinishing()) {
                     if (listener != null){
                         try {
@@ -121,7 +124,7 @@ public class RequestCenter {
         Call call = HttpClient.getInstance(activity).sendJsonResquest(CommonRequest.
                 createGetRequest(url, params, headers, true), new DisposeDataHandle(new DisposeJsonListener() {
             @Override
-            public void onSuccess(Headers headerData, JSONObject jsonObject) {
+            public void onSuccess(@NonNull Headers headerData, @NonNull JSONObject jsonObject) {
                 if (!activity.isFinishing()){
                     if (listener != null){
                         try {
@@ -134,7 +137,7 @@ public class RequestCenter {
             }
 
             @Override
-            public void onFailure(OkHttpException error) {
+            public void onFailure(@NonNull OkHttpException error) {
                 if (!activity.isFinishing()) {
                     if (listener != null){
                         try {
@@ -156,14 +159,14 @@ public class RequestCenter {
         Call call = HttpClient.getInstance(activity).headResquest(CommonRequest.
                 createHeadRequest(url, headers, true), new DisposeDataHandle(new DisposeHeadListener() {
             @Override
-            public void onSuccess(Headers headerData) {
+            public void onSuccess(@NonNull Headers headerData) {
                 if (listener != null){
                     listener.onSuccess(headerData);
                 }
             }
 
             @Override
-            public void onFailure(OkHttpException error) {
+            public void onFailure(@NonNull OkHttpException error) {
                 if (listener != null){
                     listener.onFailure(error);
                 }
@@ -187,6 +190,13 @@ public class RequestCenter {
 
     protected static Call createPostRequest(Context context,String url, RequestParams params, HeaderParams headers,boolean isDev){
         return HttpClient.getInstance(context).createRequest(CommonRequest.createPostRequest(url,params,headers,isDev));
+    }
+
+    public static Call downloadFile(Context context, String url, String path, DisposeDownloadListener listener) {
+        HeaderParams params = new HeaderParams();
+        return HttpClient.getInstance(context).downloadFile(context,
+                CommonRequest.createDownloadRequest(url, null, params, true),
+                new DisposeDataHandle(listener, path, true),HttpClient.OVERWRITE_FIRST);
     }
 
 }

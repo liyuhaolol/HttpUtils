@@ -1,5 +1,6 @@
 package spa.lyh.cn.httputils;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
@@ -37,28 +38,28 @@ public class MainActivity extends AppCompatActivity {
 
         RequestCenter.getNewVersion(this, new DisposeJsonListener() {
             @Override
-            public void onSuccess(Headers headerData, JSONObject jsonObject) {
+            public void onSuccess(@NonNull Headers headerData, @NonNull JSONObject jsonObject) {
                 Toast.makeText(MainActivity.this,headerData.get("Content-Type"), Toast.LENGTH_SHORT).show();
-                TypeReference typeReference = new TypeReference<JsonFromServer<UpdateInfo>>() {};
-                JsonFromServer<UpdateInfo> jsonF = jsonObject.to(typeReference.getType());
+                //TypeReference typeReference = new TypeReference<JsonFromServer<UpdateInfo>>(){};
+                JsonFromServer<UpdateInfo> jsonF = jsonObject.to(new TypeReference<JsonFromServer<UpdateInfo>>(){});
                 text.setText(jsonF.toString());
 
             }
 
             @Override
-            public void onFailure(OkHttpException error) {
+            public void onFailure(@NonNull OkHttpException error) {
                 text.setText(error.getEmsg());
             }
         });
 
         RequestCenter.logNewVersion(this, new DisposeStringListener() {
             @Override
-            public void onSuccess(Headers headerData, String stringBody) {
+            public void onSuccess(@NonNull Headers headerData, @NonNull String stringBody) {
                 Log.e("qwer","打印结果："+stringBody);
             }
 
             @Override
-            public void onFailure(OkHttpException error) {
+            public void onFailure(@NonNull OkHttpException error) {
                 Log.e("qwer",error.getEmsg());
             }
         });
@@ -304,12 +305,5 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });*/
-    }
-
-    public static Call downloadFile(Context context, String url, String path, int mod, DisposeDownloadListener listener) {
-        HeaderParams params = new HeaderParams();
-        return HttpClient.getInstance(context).downloadFile(context,
-                CommonRequest.createDownloadRequest(url, null, params, true),
-                new DisposeDataHandle(listener, path, true),mod);
     }
 }

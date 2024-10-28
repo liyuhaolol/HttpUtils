@@ -1,5 +1,7 @@
 package spa.lyh.cn.lib_https.listener;
 
+import org.jetbrains.annotations.NotNull;
+
 import spa.lyh.cn.lib_https.exception.OkHttpException;
 
 /**
@@ -8,9 +10,9 @@ import spa.lyh.cn.lib_https.exception.OkHttpException;
  */
 public interface DisposeDownloadListener{
 
-	void onSuccess(String filePath, String fileName);
+	void onSuccess(@NotNull String filePath,@NotNull  String fileName);
 
-	void onFailure(OkHttpException error);
+	void onFailure(@NotNull OkHttpException error);
 
-	void onProgress(boolean haveFileSize,int progress, String currentSize, String sumSize);
+	void onProgress(boolean haveFileSize,int progress, @NotNull String currentSize,@NotNull  String sumSize);
 }

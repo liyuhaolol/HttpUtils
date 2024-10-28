@@ -1,21 +1,27 @@
 package spa.lyh.cn.lib_https.multirequest;
 
 
-import com.alibaba.fastjson2.TypeReference;
-
 import okhttp3.Call;
-import spa.lyh.cn.lib_https.listener.DisposeMultiDataListener;
+import spa.lyh.cn.lib_https.listener.DisposeMultiJsonListener;
+import spa.lyh.cn.lib_https.listener.DisposeMultiStringListener;
 
 public class MultiCall {
    public Call call;
-   public DisposeMultiDataListener listener;
-   public TypeReference<?> typeReference;
+   public DisposeMultiJsonListener jsonListener;
+   public DisposeMultiStringListener stringListener;
    public boolean useHttpFilter;
 
-   public MultiCall(Call call,TypeReference<?> typeReference,boolean useHttpFilter, DisposeMultiDataListener listener){
+   public MultiCall(Call call,boolean useHttpFilter, DisposeMultiJsonListener listener){
       this.call = call;
-      this.listener = listener;
+      this.jsonListener = listener;
       this.useHttpFilter = useHttpFilter;
-      this.typeReference = typeReference;
+      this.stringListener = null;
+   }
+
+   public MultiCall(Call call,boolean useHttpFilter, DisposeMultiStringListener listener){
+      this.call = call;
+      this.jsonListener = null;
+      this.useHttpFilter = useHttpFilter;
+      this.stringListener = listener;
    }
 }

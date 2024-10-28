@@ -360,7 +360,7 @@ public class MultipartUploadCenter {
         //合并接口
         HttpClient.getInstance(context).sendJsonResquest(CommonRequest.createGetRequest(mergeUrl,bodyParams,headerParams,isDev),new DisposeDataHandle(new DisposeJsonListener() {
             @Override
-            public void onSuccess(Headers headerData, JSONObject jsonObject) {
+            public void onSuccess(@NonNull Headers headerData, @NonNull JSONObject jsonObject) {
                 Result result = jsonObject.toJavaObject(Result.class);
                 if (result.code == 200){
                     String info;
@@ -377,7 +377,7 @@ public class MultipartUploadCenter {
             }
 
             @Override
-            public void onFailure(OkHttpException error) {
+            public void onFailure(@NonNull OkHttpException error) {
                 sendMsg(MultipartUploadCenter.MERGE_FAIL,MERGE_MSG);
             }
         }, isDev));
