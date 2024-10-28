@@ -3,8 +3,7 @@ package spa.lyh.cn.lib_https.response;
 import android.os.Handler;
 import android.os.Looper;
 
-
-import com.alibaba.fastjson2.JSONObject;
+import androidx.annotation.NonNull;
 
 import java.io.IOException;
 
@@ -14,47 +13,39 @@ import okhttp3.Headers;
 import okhttp3.Response;
 import spa.lyh.cn.lib_https.exception.OkHttpException;
 import spa.lyh.cn.lib_https.listener.DisposeDataHandle;
-import spa.lyh.cn.lib_https.listener.DisposeJsonListener;
+import spa.lyh.cn.lib_https.listener.DisposeDataListener;
 import spa.lyh.cn.lib_https.log.LyhLog;
 import spa.lyh.cn.lib_https.response.base.CommonBase;
 import spa.lyh.cn.lib_https.utils.LogUtils;
 
-/**
- * @author liyuhao
- * @function 专门处理JSON的回调
- */
-public class CommonJsonCallback extends CommonBase implements Callback {
-
-
-
-
+public class CommonDataCallback extends CommonBase implements Callback {
     /**
      * 将其它线程的数据转发到UI线程
      */
     private Handler mDeliveryHandler;
-    private DisposeJsonListener mListener;
+    private DisposeDataListener mListener;
     private boolean devMode;
     private long requestTime;
 
-    public CommonJsonCallback(DisposeDataHandle handle) {
+    public CommonDataCallback(DisposeDataHandle handle) {
         requestTime = System.currentTimeMillis();
-        this.mListener = handle.jsonListener;
+        this.mListener = handle.dataListener;
         this.devMode = handle.devMode;
         this.mDeliveryHandler = new Handler(Looper.getMainLooper());
     }
 
     @Override
-    public void onFailure(final Call call, final IOException ioexception) {
-        if(ioexception != null){
-            ioexception.printStackTrace();
+    public void onFailure(@NonNull Call call, @NonNull IOException e) {
+        if(e != null){
+            e.printStackTrace();
             /**
              * 此时还在非UI线程，因此要转发
              */
             mDeliveryHandler.post(new Runnable() {
                 @Override
                 public void run() {
-                    if (ioexception.getMessage() != null){
-                        if (ioexception.getMessage().equals("Canceled")){
+                    if (e.getMessage() != null && mListener != null){
+                        if (e.getMessage().equals("Canceled")){
                             mListener.onFailure(new OkHttpException(OkHttpException.CANCEL_REQUEST, CANCEL_MSG,null));
                         }else {
                             mListener.onFailure(new OkHttpException(OkHttpException.NETWORK_ERROR, NET_MSG,null));
@@ -66,7 +57,7 @@ public class CommonJsonCallback extends CommonBase implements Callback {
     }
 
     @Override
-    public void onResponse(final Call call, final Response response) throws IOException {
+    public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
         final String result = response.body().string();
         mDeliveryHandler.post(new Runnable() {
             @Override
@@ -76,9 +67,11 @@ public class CommonJsonCallback extends CommonBase implements Callback {
         });
     }
 
-    private void handleResponse(String url,Headers headerData,Object bodyData) {
-        if (bodyData == null || bodyData.toString().trim().equals("")) {
-            mListener.onFailure(new OkHttpException(OkHttpException.NETWORK_ERROR, EMPTY_MSG,null));//网络错误
+    private void handleResponse(String url, Headers headerData, Object bodyData) {
+        if (bodyData == null || bodyData.toString().trim().isEmpty()) {
+            if (mListener != null){
+                mListener.onFailure(new OkHttpException(OkHttpException.NETWORK_ERROR, EMPTY_MSG,null));//网络错误
+            }
             return;
         }
         //是否在控制台打印信息
@@ -87,19 +80,8 @@ public class CommonJsonCallback extends CommonBase implements Callback {
             long time = finishTime - requestTime;
             LyhLog.e(TAG, LogUtils.makeResponseLog(url,bodyData.toString(),time+"ms"));
         }
-
-        try {
-            //按照范型解析
-            JSONObject realResult = JSONObject.parseObject(bodyData.toString());
-
-            if (realResult != null){
-                mListener.onSuccess(headerData,realResult);
-            }else {
-                mListener.onFailure(new OkHttpException(OkHttpException.OTHER_ERROR, EMPTY_MSG,bodyData.toString()));
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            mListener.onFailure(new OkHttpException(OkHttpException.JSON_ERROR,JSON_CONVERT_ERROR,bodyData.toString()));//json解析错误
+        if (mListener != null){
+            mListener.onSuccess(headerData,bodyData.toString());
         }
     }
 }

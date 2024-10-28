@@ -44,7 +44,7 @@ public class CommonHeadCallback extends CommonBase implements Callback {
             mDeliveryHandler.post(new Runnable() {
                 @Override
                 public void run() {
-                    if (ioexception.getMessage() != null){
+                    if (ioexception.getMessage() != null && mListener != null){
                         if (ioexception.getMessage().equals("Canceled")){
                             mListener.onFailure(new OkHttpException(OkHttpException.CANCEL_REQUEST, CANCEL_MSG,null));
                         }else {
@@ -77,8 +77,10 @@ public class CommonHeadCallback extends CommonBase implements Callback {
     }*/
 
     private void handleHeaders(String url,Headers headerData) {
-        if (headerData == null || headerData.toString().trim().equals("")) {
-            mListener.onFailure(new OkHttpException(OkHttpException.NETWORK_ERROR, EMPTY_MSG,null));//网络错误
+        if (headerData == null || headerData.toString().trim().isEmpty()) {
+            if (mListener != null){
+                mListener.onFailure(new OkHttpException(OkHttpException.NETWORK_ERROR, EMPTY_MSG,null));//网络错误
+            }
             return;
         }
         //是否在控制台打印信息
@@ -88,6 +90,8 @@ public class CommonHeadCallback extends CommonBase implements Callback {
             LyhLog.e(TAG, LogUtils.makeHeaderLog(url, headerData.toString(),time+"ms"));
         }
 
-        mListener.onSuccess(headerData);
+        if (mListener != null){
+            mListener.onSuccess(headerData);
+        }
     }
 }

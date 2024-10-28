@@ -6,7 +6,6 @@ import android.content.Context;
 import androidx.annotation.NonNull;
 
 import com.alibaba.fastjson2.JSONObject;
-import com.alibaba.fastjson2.TypeReference;
 
 import okhttp3.Call;
 import okhttp3.Headers;
@@ -14,9 +13,8 @@ import spa.lyh.cn.lib_https.HttpClient;
 import spa.lyh.cn.lib_https.exception.OkHttpException;
 import spa.lyh.cn.lib_https.listener.DisposeDataHandle;
 import spa.lyh.cn.lib_https.listener.DisposeDownloadListener;
-import spa.lyh.cn.lib_https.listener.DisposeJsonListener;
 import spa.lyh.cn.lib_https.listener.DisposeHeadListener;
-import spa.lyh.cn.lib_https.listener.DisposeStringListener;
+import spa.lyh.cn.lib_https.listener.DisposeDataListener;
 import spa.lyh.cn.lib_https.request.CommonRequest;
 import spa.lyh.cn.lib_https.request.HeaderParams;
 import spa.lyh.cn.lib_https.request.RequestParams;
@@ -29,14 +27,14 @@ public class RequestCenter {
      * @param activity
      * @param listener
      */
-    public static void getNewVersion(Activity activity, DisposeJsonListener listener) {
+    public static void getNewVersion(Activity activity, DisposeDataListener listener) {
         RequestParams bodyParams = new RequestParams();
         bodyParams.put("appType", "1");
         bodyParams.put("siteId", "924958456908492800");
         Call call = RequestCenter.postRequest(activity, "http://ums.offshoremedia.net/app/versionInfo", bodyParams, null, listener);
     }
 
-    public static void logNewVersion(Activity activity, DisposeStringListener listener) {
+    public static void logNewVersion(Activity activity, DisposeDataListener listener) {
         RequestParams bodyParams = new RequestParams();
         bodyParams.put("appType", "1");
         bodyParams.put("siteId", "924958456908492800");
@@ -44,48 +42,12 @@ public class RequestCenter {
     }
 
 
-    protected static Call postRequest(final Activity activity, String url, RequestParams params, HeaderParams headers, final DisposeJsonListener listener) {
+    protected static Call postRequest(final Activity activity, String url, RequestParams params, HeaderParams headers, final DisposeDataListener listener) {
         //初始化等待loadDialog并显示
         //final LoadingDialog loadDialog = new LoadingDialog(activity);
         //创建网络请求
-        Call call = HttpClient.getInstance(activity).sendJsonResquest(CommonRequest.
-                createPostRequest(url, params, headers, true), new DisposeDataHandle(new DisposeJsonListener() {
-            @Override
-            public void onSuccess(@NonNull Headers headerData, @NonNull JSONObject jsonObject) {
-                if (!activity.isFinishing()){
-                    if (listener != null){
-                        try {
-                            listener.onSuccess(headerData,jsonObject);
-                        }catch (Exception e){
-                            e.printStackTrace();
-                        }
-                    }
-                }
-            }
-
-            @Override
-            public void onFailure(@NonNull OkHttpException error) {
-                if (!activity.isFinishing()) {
-                    if (listener != null){
-                        try {
-                            listener.onFailure(error);
-                        }catch (Exception e){
-                            e.printStackTrace();
-                        }
-                    }
-                }
-            }
-        }, true));
-
-        return call;
-    }
-
-    protected static Call postRequest(final Activity activity, String url, RequestParams params, HeaderParams headers, final DisposeStringListener listener) {
-        //初始化等待loadDialog并显示
-        //final LoadingDialog loadDialog = new LoadingDialog(activity);
-        //创建网络请求
-        Call call = HttpClient.getInstance(activity).sendStringResquest(CommonRequest.
-                createPostRequest(url, params, headers, true), new DisposeDataHandle(new DisposeStringListener() {
+        Call call = HttpClient.getInstance(activity).sendResquest(CommonRequest.
+                createPostRequest(url, params, headers, true), new DisposeDataHandle(new DisposeDataListener() {
             @Override
             public void onSuccess(@NonNull Headers headerData, @NonNull String stringBody) {
                 if (!activity.isFinishing()){
@@ -117,18 +79,18 @@ public class RequestCenter {
     }
 
 
-    protected static Call getRequest(final Activity activity, String url, RequestParams params, HeaderParams headers, final DisposeJsonListener listener) {
+    protected static Call getRequest(final Activity activity, String url, RequestParams params, HeaderParams headers, final DisposeDataListener listener) {
         //初始化等待loadDialog并显示
         //final LoadingDialog loadDialog = new LoadingDialog(activity);
         //创建网络请求
-        Call call = HttpClient.getInstance(activity).sendJsonResquest(CommonRequest.
-                createGetRequest(url, params, headers, true), new DisposeDataHandle(new DisposeJsonListener() {
+        Call call = HttpClient.getInstance(activity).sendResquest(CommonRequest.
+                createGetRequest(url, params, headers, true), new DisposeDataHandle(new DisposeDataListener() {
             @Override
-            public void onSuccess(@NonNull Headers headerData, @NonNull JSONObject jsonObject) {
+            public void onSuccess(@NonNull Headers headerData, @NonNull String stringBody) {
                 if (!activity.isFinishing()){
                     if (listener != null){
                         try {
-                            listener.onSuccess(headerData,jsonObject);
+                            listener.onSuccess(headerData,stringBody);
                         }catch (Exception e){
                             e.printStackTrace();
                         }

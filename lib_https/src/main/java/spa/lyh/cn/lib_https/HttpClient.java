@@ -18,8 +18,7 @@ import spa.lyh.cn.lib_https.https.HttpsUtils;
 import spa.lyh.cn.lib_https.listener.DisposeDataHandle;
 import spa.lyh.cn.lib_https.response.CommonFileCallback;
 import spa.lyh.cn.lib_https.response.CommonHeadCallback;
-import spa.lyh.cn.lib_https.response.CommonJsonCallback;
-import spa.lyh.cn.lib_https.response.CommonStringCallback;
+import spa.lyh.cn.lib_https.response.CommonDataCallback;
 
 /**
  * @author qndroid
@@ -93,15 +92,9 @@ public class HttpClient {
      * @param handle
      * @return
      */
-    public Call sendJsonResquest(Request request, DisposeDataHandle handle) {
+    public Call sendResquest(Request request, DisposeDataHandle handle) {
         Call call = mOkHttpClient.newCall(request);
-        call.enqueue(new CommonJsonCallback(handle));
-        return call;
-    }
-
-    public Call sendStringResquest(Request request, DisposeDataHandle handle) {
-        Call call = mOkHttpClient.newCall(request);
-        call.enqueue(new CommonStringCallback(handle));
+        call.enqueue(new CommonDataCallback(handle));
         return call;
     }
 

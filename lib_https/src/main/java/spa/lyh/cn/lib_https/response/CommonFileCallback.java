@@ -72,7 +72,9 @@ public class CommonFileCallback extends CommonBase implements Callback {
                 switch (msg.what) {
                     case PROGRESS_MESSAGE:
                         Progress p = (Progress) msg.obj;
-                        mListener.onProgress(p.haveFileSize(),p.getProgress(),p.getCurrentSize(),p.getSumSize());
+                        if (mListener != null){
+                            mListener.onProgress(p.haveFileSize(),p.getProgress(),p.getCurrentSize(),p.getSumSize());
+                        }
                         break;
                     case SUCCESS_MESSAGE:
                         Success success = (Success) msg.obj;
@@ -83,11 +85,15 @@ public class CommonFileCallback extends CommonBase implements Callback {
                             Log.e(TAG,"文件名:"+success.getFileName());
                             Log.e(TAG,"文件路径:"+success.getFilePath());
                         }
-                        mListener.onSuccess(success.getFilePath(),success.getFileName());
+                        if (mListener != null){
+                            mListener.onSuccess(success.getFilePath(),success.getFileName());
+                        }
                         break;
                     case FAILURE_MESSAGE:
                         OkHttpException e = (OkHttpException) msg.obj;
-                        mListener.onFailure(e);
+                        if (mListener != null){
+                            mListener.onFailure(e);
+                        }
                         break;
                 }
             }

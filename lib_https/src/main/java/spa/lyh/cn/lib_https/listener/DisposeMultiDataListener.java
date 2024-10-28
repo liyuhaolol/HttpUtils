@@ -5,7 +5,7 @@ import org.jetbrains.annotations.NotNull;
 import okhttp3.Headers;
 import spa.lyh.cn.lib_https.exception.OkHttpException;
 
-public interface DisposeMultiStringListener {
+public interface DisposeMultiDataListener {
 
     /**
      * 请求成功回调事件处理,返回true请求池才会正常响应任务结束方法

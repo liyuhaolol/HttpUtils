@@ -5,22 +5,21 @@ import androidx.appcompat.app.AppCompatActivity
 import com.alibaba.fastjson2.JSONObject
 import okhttp3.Headers
 import spa.lyh.cn.lib_https.exception.OkHttpException
+import spa.lyh.cn.lib_https.listener.DisposeDataListener
 import spa.lyh.cn.lib_https.listener.DisposeDownloadListener
-import spa.lyh.cn.lib_https.listener.DisposeJsonListener
 
 class SecondActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        RequestCenter.getNewVersion(this,object : DisposeJsonListener{
-            override fun onSuccess(
-                headerData: Headers,
-                jsonObject: JSONObject
-            ) {
+        RequestCenter.getNewVersion(this,object : DisposeDataListener{
+            override fun onSuccess(headerData: Headers, stringBody: String) {
+
             }
 
             override fun onFailure(error: OkHttpException) {
+
             }
         })
 

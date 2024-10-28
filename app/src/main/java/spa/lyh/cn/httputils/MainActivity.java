@@ -3,7 +3,6 @@ package spa.lyh.cn.httputils;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.TextView;
@@ -12,18 +11,11 @@ import android.widget.Toast;
 import com.alibaba.fastjson2.JSONObject;
 import com.alibaba.fastjson2.TypeReference;
 
-import okhttp3.Call;
 import okhttp3.Headers;
 import spa.lyh.cn.httputils.model.JsonFromServer;
 import spa.lyh.cn.httputils.model.UpdateInfo;
-import spa.lyh.cn.lib_https.HttpClient;
 import spa.lyh.cn.lib_https.exception.OkHttpException;
-import spa.lyh.cn.lib_https.listener.DisposeDataHandle;
-import spa.lyh.cn.lib_https.listener.DisposeJsonListener;
-import spa.lyh.cn.lib_https.listener.DisposeDownloadListener;
-import spa.lyh.cn.lib_https.listener.DisposeStringListener;
-import spa.lyh.cn.lib_https.request.CommonRequest;
-import spa.lyh.cn.lib_https.request.HeaderParams;
+import spa.lyh.cn.lib_https.listener.DisposeDataListener;
 
 public class MainActivity extends AppCompatActivity {
     TextView text,progress_tv;
@@ -36,14 +28,13 @@ public class MainActivity extends AppCompatActivity {
         text = findViewById(R.id.text);
         progress_tv = findViewById(R.id.progress);
 
-        RequestCenter.getNewVersion(this, new DisposeJsonListener() {
+        RequestCenter.getNewVersion(this, new DisposeDataListener() {
             @Override
-            public void onSuccess(@NonNull Headers headerData, @NonNull JSONObject jsonObject) {
+            public void onSuccess(@NonNull Headers headerData, @NonNull String stringBody) {
                 Toast.makeText(MainActivity.this,headerData.get("Content-Type"), Toast.LENGTH_SHORT).show();
                 //TypeReference typeReference = new TypeReference<JsonFromServer<UpdateInfo>>(){};
-                JsonFromServer<UpdateInfo> jsonF = jsonObject.to(new TypeReference<JsonFromServer<UpdateInfo>>(){});
+                JsonFromServer<UpdateInfo> jsonF = JSONObject.parseObject(stringBody,new TypeReference<JsonFromServer<UpdateInfo>>(){});
                 text.setText(jsonF.toString());
-
             }
 
             @Override
@@ -52,7 +43,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        RequestCenter.logNewVersion(this, new DisposeStringListener() {
+        RequestCenter.logNewVersion(this, new DisposeDataListener() {
             @Override
             public void onSuccess(@NonNull Headers headerData, @NonNull String stringBody) {
                 Log.e("qwer","打印结果："+stringBody);

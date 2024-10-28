@@ -6,33 +6,20 @@ package spa.lyh.cn.lib_https.listener;
  */
 public class DisposeDataHandle {
 
-	public DisposeJsonListener jsonListener = null;
 	public DisposeDownloadListener downloadListener = null;
 	public DisposeHeadListener headListener = null;
 
-	public DisposeStringListener stringListener = null;
+	public DisposeDataListener dataListener = null;
 	public boolean devMode;
 
 	public String mSource = null;
 
 	/**
-	 * 不指定对应的clazz，应该用不到
 	 * @param listener
 	 */
-	public DisposeDataHandle(DisposeStringListener listener,boolean devMode)
+	public DisposeDataHandle(DisposeDataListener listener, boolean devMode)
 	{
-		this.stringListener = listener;
-		this.devMode = devMode;
-	}
-
-	/**
-	 * json请求使用的handle
-	 * @param listener
-	 * @param devMode
-	 */
-	public DisposeDataHandle(DisposeJsonListener listener, boolean devMode)
-	{
-		this.jsonListener = listener;
+		this.dataListener = listener;
 		this.devMode = devMode;
 	}
 

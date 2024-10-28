@@ -6,7 +6,7 @@ import org.jetbrains.annotations.NotNull;
 import okhttp3.Headers;
 import spa.lyh.cn.lib_https.exception.OkHttpException;
 
-public interface DisposeStringListener {
+public interface DisposeDataListener {
     /**
      * 请求成功回调事件处理
      */
