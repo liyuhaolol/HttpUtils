@@ -205,10 +205,8 @@ public class MultipartUploadCenter {
     }
 
     private void prepare(){
-        if (documentFile != null){
-            countPieceSize();//计算分片大小
-            countChunks();//计算总片数
-        }
+        countPieceSize();//计算分片大小
+        countChunks();//计算总片数
     }
 
     private void countPieceSize(){
@@ -248,15 +246,26 @@ public class MultipartUploadCenter {
             }
         }else if (res instanceof Uri){
             Uri uri = (Uri) res;
-            documentFile = DocumentFile.fromSingleUri(context, uri);
-            if (documentFile != null){
-                fileName = documentFile.getName();
-                fileSize = documentFile.length();
+            if (uri.getScheme().equals("content")){
+                documentFile = DocumentFile.fromSingleUri(context, uri);
+                if (documentFile != null){
+                    fileName = documentFile.getName();
+                    fileSize = documentFile.length();
+                    bodyParams.put("fileOriName",fileName);
+                    bodyParams.put("videoName",fileName );
+                }else {
+                    Log.e(TAG,"DocumentFile未能正确获取");
+                }
+            }else {
+                //假设剩下的均为file类型，遇到崩溃之类的再说
+                //强转为File对象
+                File file = new File(uri.getPath());
+                fileName = file.getName();
+                fileSize = file.length();
                 bodyParams.put("fileOriName",fileName);
                 bodyParams.put("videoName",fileName );
-            }else {
-                Log.e(TAG,"DocumentFile未能正确获取");
             }
+
         }else {
             Log.e(TAG,"未能初始化文件信息");
         }
