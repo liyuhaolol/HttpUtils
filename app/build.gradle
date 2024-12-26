@@ -20,22 +20,22 @@ android {
         }
     }
     compileOptions{
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_21
+        targetCompatibility JavaVersion.VERSION_21
     }
     buildFeatures {
         viewBinding true
         buildConfig true
     }
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = "21"
     }
 }
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'androidx.appcompat:appcompat:1.7.0'
-    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+    implementation 'androidx.constraintlayout:constraintlayout:2.2.0'
     implementation project(':lib_https')
     //implementation "com.github.liyuhaolol:HttpUtils:${versions.versionName}"
     implementation "com.alibaba.fastjson2:fastjson2:${Lib.INSTANCE.fastjson}"

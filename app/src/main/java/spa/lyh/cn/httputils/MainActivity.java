@@ -65,6 +65,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onSuccess(@NonNull Headers headerData, @NonNull String stringBody) {
                 Log.e("qwer","打印结果："+stringBody);
+
             }
 
             @Override
