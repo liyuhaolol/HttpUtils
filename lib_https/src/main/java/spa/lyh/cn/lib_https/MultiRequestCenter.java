@@ -37,40 +37,25 @@ public class MultiRequestCenter {
 
    private boolean allowFinish = true;
 
-   private final Handler handler = new Handler(new Handler.Callback() {
+   private final Handler handler = new Handler(Looper.getMainLooper()){
       @Override
-      public boolean handleMessage(@NonNull Message msg) {
+      public void handleMessage(@NonNull Message msg) {
          switch (msg.what){
             case TASK_SUCCESS:
                if (listener != null){
                   if (allowFinish){
-                     new Handler(Looper.getMainLooper()).post(new Runnable() {
-                        @Override
-                        public void run() {
-                           listener.onFinish();
-                           release();
-                        }
-                     });
+                     listener.onFinish();
+                     release();
                   }else {
-                     new Handler(Looper.getMainLooper()).post(new Runnable() {
-                        @Override
-                        public void run() {
-                           listener.onTermination();//有任务阻止整体结束
-                           release();
-                        }
-                     });
+                     listener.onTermination();//有任务阻止整体结束
+                     release();
                   }
                }
                break;
             case TASK_CANCAL:
                if (listener != null){
-                  new Handler(Looper.getMainLooper()).post(new Runnable() {
-                     @Override
-                     public void run() {
-                        listener.onCancel();
-                        release();
-                     }
-                  });
+                  listener.onCancel();
+                  release();
                }
                break;
             case TASK_STOP_FINISH:
@@ -84,9 +69,8 @@ public class MultiRequestCenter {
                }
                break;
          }
-         return true;
       }
-   });
+   };
 
    public static MultiRequestCenter get(Context context){
       return new MultiRequestCenter(context);
