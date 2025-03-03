@@ -7,14 +7,21 @@ import androidx.annotation.NonNull;
 
 import com.alibaba.fastjson2.JSONObject;
 
+import java.util.List;
+
 import okhttp3.Call;
 import okhttp3.Headers;
 import spa.lyh.cn.lib_https.HttpClient;
+import spa.lyh.cn.lib_https.MultiDownloadRequestCenter;
 import spa.lyh.cn.lib_https.exception.OkHttpException;
 import spa.lyh.cn.lib_https.listener.DisposeDataHandle;
 import spa.lyh.cn.lib_https.listener.DisposeDownloadListener;
 import spa.lyh.cn.lib_https.listener.DisposeHeadListener;
 import spa.lyh.cn.lib_https.listener.DisposeDataListener;
+import spa.lyh.cn.lib_https.listener.DisposeMultiDownloadListener;
+import spa.lyh.cn.lib_https.listener.RequestResultListener;
+import spa.lyh.cn.lib_https.multirequest.MultiCall;
+import spa.lyh.cn.lib_https.multirequest.MultiDownloadCall;
 import spa.lyh.cn.lib_https.request.CommonRequest;
 import spa.lyh.cn.lib_https.request.HeaderParams;
 import spa.lyh.cn.lib_https.request.RequestParams;
@@ -159,6 +166,24 @@ public class RequestCenter {
         return HttpClient.getInstance(context).downloadFile(context,
                 CommonRequest.createDownloadRequest(url, null, params, true),
                 new DisposeDataHandle(listener, path, true),HttpClient.OVERWRITE_FIRST);
+    }
+
+    public static MultiDownloadCall createDownloadFile(Context context, String url, DisposeMultiDownloadListener listener){
+        return new MultiDownloadCall(
+                HttpClient.getInstance(context)
+                        .createRequest(CommonRequest.createGetRequest(url,null,null,true)),
+                false,
+                listener);
+    }
+
+    public static void startDownloadRequestPool(Context context, List<MultiDownloadCall> calls,String filePath, RequestResultListener listener){
+        MultiDownloadRequestCenter
+                .get(context)
+                .setDevMode(true)
+                .setOverwriteMod(HttpClient.OVERWRITE_FIRST)
+                .setFilePath(filePath)
+                .addRequests(calls)
+                .startTasks(listener);
     }
 
 }

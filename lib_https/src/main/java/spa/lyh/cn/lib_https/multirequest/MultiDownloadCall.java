@@ -1,0 +1,17 @@
+package spa.lyh.cn.lib_https.multirequest;
+
+import okhttp3.Call;
+import spa.lyh.cn.lib_https.listener.DisposeMultiDownloadListener;
+
+public class MultiDownloadCall {
+
+    public Call call;
+    public DisposeMultiDownloadListener downloadListener;
+    public boolean useHttpFilter;
+
+    public MultiDownloadCall(Call call,boolean useHttpFilter, DisposeMultiDownloadListener listener){
+        this.call = call;
+        this.useHttpFilter = useHttpFilter;
+        this.downloadListener = listener;
+    }
+}

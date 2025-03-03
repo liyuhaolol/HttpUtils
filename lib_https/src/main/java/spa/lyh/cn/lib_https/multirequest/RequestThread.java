@@ -46,13 +46,13 @@ public class RequestThread extends Thread implements Runnable{
       super.run();
       try{
          //执行网络请求
-         uploadRequest();
+         startRequest();
       }catch (Exception e){
          if(multiCall.dataListener != null){
             handler.post(new Runnable() {
                @Override
                public void run() {
-                  allowFinish = multiCall.dataListener.onFailure(new OkHttpException(OkHttpException.NETWORK_ERROR, CommonBase.NET_MSG,null));
+                  allowFinish = multiCall.dataListener.onFailure(new OkHttpException(OkHttpException.OTHER_ERROR, CommonBase.EMPTY_MSG,e.getMessage()));
                   shouldLock = false;
                }
             });
@@ -77,7 +77,7 @@ public class RequestThread extends Thread implements Runnable{
       release();
    }
 
-   private void uploadRequest() throws IOException {
+   private void startRequest() throws IOException {
       requestTime = System.currentTimeMillis();
       //执行请求
       mResponse = null;

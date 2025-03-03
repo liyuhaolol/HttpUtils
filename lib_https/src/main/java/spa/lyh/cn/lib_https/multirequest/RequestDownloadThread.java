@@ -1,79 +1,68 @@
-package spa.lyh.cn.lib_https.response;
+package spa.lyh.cn.lib_https.multirequest;
 
 import android.content.Context;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.text.TextUtils;
 import android.util.Log;
 
-import java.io.File;
+import androidx.annotation.NonNull;
+
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.DecimalFormat;
 
-import okhttp3.Call;
-import okhttp3.Callback;
 import okhttp3.Response;
+import okhttp3.ResponseBody;
+import spa.lyh.cn.lib_https.HttpClient;
+import spa.lyh.cn.lib_https.MultiRequestCenter;
 import spa.lyh.cn.lib_https.exception.OkHttpException;
-import spa.lyh.cn.lib_https.listener.DisposeDataHandle;
-import spa.lyh.cn.lib_https.listener.DisposeDownloadListener;
+import spa.lyh.cn.lib_https.log.LyhLog;
 import spa.lyh.cn.lib_https.model.Progress;
 import spa.lyh.cn.lib_https.model.Success;
 import spa.lyh.cn.lib_https.response.base.CommonBase;
+import spa.lyh.cn.lib_https.utils.LogUtils;
 import spa.lyh.cn.utils_io.IOUtils;
 import spa.lyh.cn.utils_io.model.FileData;
 
+public class RequestDownloadThread extends Thread implements Runnable{
+    private MultiDownloadCall multiCall;
+    volatile boolean shouldLock = true;
+    volatile boolean allowFinish = true;
+    private Handler mDeliveryHandler;
+    private Handler questHandler;
+    private boolean devMode;
+    private long requestTime;
+    private Context context;
+    private int mod;
+    private String mFilePath;
 
-/**
- * *******************************************************
- *
- * @文件名称：CommonFileCallback.java
- * @文件作者：liyuhao
- * @创建时间：2017年9月12日 下午5:32:01
- * @文件描述：专门处理文件下载回调
- * @修改历史：2016年1月23日创建初始版本
- *
- * ********************************************************
- */
-public class CommonFileCallback extends CommonBase implements Callback {
+    private static final int PROGRESS_MESSAGE = 0x01;
+    private static final int SUCCESS_MESSAGE = 0x02;
+    private static final int FAILURE_MESSAGE = 0x03;
+    public static final String TAG = "HttpUtils";
     /**
      * 默认的错误文件代替名
      */
     private static final String DEAFULT_FILE_NAME = "default";
 
-    /**
-     * 将其它线程的数据转发到UI线程
-     */
-    private static final int PROGRESS_MESSAGE = 0x01;
-    private static final int SUCCESS_MESSAGE = 0x02;
-    private static final int FAILURE_MESSAGE = 0x03;
-    private Handler mDeliveryHandler;
-    private DisposeDownloadListener mListener;
-    private String mFilePath;
-    private boolean devMode;
-
-    private Context context;
-    private int mod;
-
-    private long requestTime;
-
-    public CommonFileCallback(Context context,DisposeDataHandle handle,int mod) {
-        requestTime = System.currentTimeMillis();
-        this.mListener = handle.downloadListener;
-        this.mFilePath = handle.mSource;
-        this.devMode = handle.devMode;
+    public RequestDownloadThread(Context context,Handler handler,MultiDownloadCall call,boolean devMode,int mod,String filePath){
         this.context = context;
+        this.multiCall = call;
+        this.questHandler = handler;
         this.mod = mod;
-        this.mDeliveryHandler = new Handler(Looper.getMainLooper()) {
+        this.mFilePath = filePath;
+        this.mDeliveryHandler = new Handler(Looper.getMainLooper()){
             @Override
-            public void handleMessage(Message msg) {
+            public void handleMessage(@NonNull Message msg) {
                 switch (msg.what) {
                     case PROGRESS_MESSAGE:
                         Progress p = (Progress) msg.obj;
-                        if (mListener != null){
-                            mListener.onProgress(p.haveFileSize(),p.getProgress(),p.getCurrentSize(),p.getSumSize());
+                        if (multiCall.downloadListener != null){
+                            multiCall.downloadListener.onProgress(p.haveFileSize(),p.getProgress(),p.getCurrentSize(),p.getSumSize());
                         }
                         break;
                     case SUCCESS_MESSAGE:
@@ -85,64 +74,63 @@ public class CommonFileCallback extends CommonBase implements Callback {
                             Log.e(TAG,"文件名:"+success.getFileName());
                             Log.e(TAG,"文件路径:"+success.getFilePath());
                         }
-                        if (mListener != null){
-                            mListener.onSuccess(success.getFilePath(),success.getFileName());
+                        if (multiCall.downloadListener != null){
+                            allowFinish = multiCall.downloadListener.onSuccess(success.getFilePath(),success.getFileName());
                         }
+                        shouldLock = false;
                         break;
                     case FAILURE_MESSAGE:
                         OkHttpException e = (OkHttpException) msg.obj;
-                        if (mListener != null){
-                            mListener.onFailure(e);
+                        if (multiCall.downloadListener != null){
+                            allowFinish = multiCall.downloadListener.onFailure(e);
                         }
+                        shouldLock = false;
                         break;
                 }
             }
         };
+        this.devMode = devMode;
     }
 
+
     @Override
-    public void onFailure(final Call call, final IOException ioexception) {
-        if(ioexception != null){
-            ioexception.printStackTrace();
-            /**
-             * 此时还在非UI线程，因此要转发
-             */
-            if (ioexception.getMessage() != null){
-                if (ioexception.getMessage().equals("Canceled")){
-                    mDeliveryHandler.obtainMessage(FAILURE_MESSAGE, new OkHttpException(OkHttpException.CANCEL_REQUEST, CANCEL_MSG,null)).sendToTarget();
-                }else {
-                    mDeliveryHandler.obtainMessage(FAILURE_MESSAGE, new OkHttpException(OkHttpException.NETWORK_ERROR, NET_MSG,null)).sendToTarget();
-                }
-            }
+    public void run() {
+        super.run();
+        try{
+            //执行网络请求
+            startRequest();
+        }catch (Exception e){
+            mDeliveryHandler.obtainMessage(FAILURE_MESSAGE, new OkHttpException(OkHttpException.OTHER_ERROR, CommonBase.EMPTY_MSG,e.getMessage())).sendToTarget();
         }
-    }
-
-    @Override
-    public void onResponse(Call call, Response response) throws IOException {
-        if (response.code() == 200){
-            handleResponse(response);
+        while (shouldLock){
+            //线程阻塞
+        }
+        Message msg = Message.obtain();
+        msg.what = MultiRequestCenter.TASK_STOP_FINISH;
+        if (allowFinish){
+            msg.arg1 = 1;
         }else {
-            mDeliveryHandler.obtainMessage(FAILURE_MESSAGE, new OkHttpException(OkHttpException.SERVER_ERROR, NET_MSG_CODE+response.code(),response.toString())).sendToTarget();
+            msg.arg1 = 0;
         }
 
+        if (questHandler != null){
+            questHandler.sendMessage(msg);
+        }
+        release();
     }
 
+    private void startRequest() throws IOException {
+        requestTime = System.currentTimeMillis();
+        //执行请求
+        Response execute = multiCall.call.execute();
 
-    /**
-     * 此时还在子线程中，不则调用回调接口
-     *
-     * @param response
-     * @return
-     */
-    private void  handleResponse(Response response){
-        if (response == null) {
-            //习惯性判空，理论不会空
-            mDeliveryHandler.obtainMessage(FAILURE_MESSAGE, new OkHttpException(OkHttpException.OTHER_ERROR, EMPTY_RESPONSE,null)).sendToTarget();
+        if (!execute.isSuccessful()){
+            //请求失败了
+            mDeliveryHandler.obtainMessage(FAILURE_MESSAGE, new OkHttpException(OkHttpException.NETWORK_ERROR, CommonBase.NET_MSG,null)).sendToTarget();
             return;
         }
 
-        String filename = getFileName(response);
-
+        String filename = getFileName(execute);
 
         int length;//每一块的长度
         byte[] buffer = new byte[2048];//每一段的长度
@@ -158,15 +146,14 @@ public class CommonFileCallback extends CommonBase implements Callback {
 
         Progress p;
         try {
-
-            inputStream  = response.body().byteStream();//输入流
+            inputStream  = execute.body().byteStream();//输入流
             data = IOUtils.createFileOutputStream(context,mFilePath,filename,mod);
             if (data == null || data.getFos() == null){
-                mDeliveryHandler.obtainMessage(FAILURE_MESSAGE, new OkHttpException(OkHttpException.OTHER_ERROR, EMPTY_RESPONSE,null)).sendToTarget();
+                mDeliveryHandler.obtainMessage(FAILURE_MESSAGE, new OkHttpException(OkHttpException.OTHER_ERROR, CommonBase.EMPTY_RESPONSE,null)).sendToTarget();
                 return;
             }
             fos = data.getFos();
-            sumLength = response.body().contentLength();//文件总大小
+            sumLength = execute.body().contentLength();//文件总大小
 
 
             if (sumLength > 0){
@@ -215,10 +202,9 @@ public class CommonFileCallback extends CommonBase implements Callback {
                 }
                 fos.flush();
             }
-
         } catch (Exception e) {
             e.printStackTrace();
-            mDeliveryHandler.obtainMessage(FAILURE_MESSAGE, new OkHttpException(OkHttpException.IO_ERROR, IO_NET_MSG,null)).sendToTarget();
+            mDeliveryHandler.obtainMessage(FAILURE_MESSAGE, new OkHttpException(OkHttpException.IO_ERROR, CommonBase.IO_NET_MSG,e.getMessage())).sendToTarget();
             return;
         } finally {
             try {
@@ -240,39 +226,16 @@ public class CommonFileCallback extends CommonBase implements Callback {
         }
     }
 
-    /**
-     * 计算文件大小<P/>
-     * Created by liyuhao on 2016/3/24.<P/>
-     * @param size 字节数
-     * @return 对应的G，M，K
-     */
-    public String convertFileSize(long size) {
-        long kb = 1024;
-        long mb = kb * 1024;
-        long gb = mb * 1024;
-
-        if (size >= gb) {
-            return String.format("%.2f GB", (float) size / gb);
-        } else if (size >= mb) {
-            float f = (float) size / mb;
-            return String.format(f > 100 ? "%.0f MB" : "%.2f MB", f);
-        } else if (size >= kb) {
-            float f = (float) size / kb;
-            return String.format(f > 100 ? "%.0f KB" : "%.2f KB", f);
-        } else
-            return String.format("%d B", size);
-    }
-
-    /**
-     * 得到对应位数小数<P/>
-     * Created by liyuhao on 2016/3/24.<P/>
-     * @param number float的数
-     * @return float的数
-     */
-    public float getNumber(float number){
-        DecimalFormat df = new DecimalFormat("#.##############");
-        float f=Float.valueOf(df.format(number));
-        return f;
+    private void release(){
+        mDeliveryHandler = null;
+        shouldLock = true;
+        multiCall = null;
+        devMode = false;
+        context = null;
+        allowFinish = true;
+        questHandler = null;
+        mod = HttpClient.OVERWRITE_FIRST;
+        mFilePath = null;
     }
 
     /**
@@ -398,5 +361,40 @@ public class CommonFileCallback extends CommonBase implements Callback {
 
         return syncContent;
 
+    }
+
+    /**
+     * 计算文件大小<P/>
+     * Created by liyuhao on 2016/3/24.<P/>
+     * @param size 字节数
+     * @return 对应的G，M，K
+     */
+    public String convertFileSize(long size) {
+        long kb = 1024;
+        long mb = kb * 1024;
+        long gb = mb * 1024;
+
+        if (size >= gb) {
+            return String.format("%.2f GB", (float) size / gb);
+        } else if (size >= mb) {
+            float f = (float) size / mb;
+            return String.format(f > 100 ? "%.0f MB" : "%.2f MB", f);
+        } else if (size >= kb) {
+            float f = (float) size / kb;
+            return String.format(f > 100 ? "%.0f KB" : "%.2f KB", f);
+        } else
+            return String.format("%d B", size);
+    }
+
+    /**
+     * 得到对应位数小数<P/>
+     * Created by liyuhao on 2016/3/24.<P/>
+     * @param number float的数
+     * @return float的数
+     */
+    public float getNumber(float number){
+        DecimalFormat df = new DecimalFormat("#.##############");
+        float f=Float.valueOf(df.format(number));
+        return f;
     }
 }
