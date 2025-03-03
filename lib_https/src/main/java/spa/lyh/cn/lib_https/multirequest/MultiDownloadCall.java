@@ -7,11 +7,9 @@ public class MultiDownloadCall {
 
     public Call call;
     public DisposeMultiDownloadListener downloadListener;
-    public boolean useHttpFilter;
 
-    public MultiDownloadCall(Call call,boolean useHttpFilter, DisposeMultiDownloadListener listener){
+    public MultiDownloadCall(Call call, DisposeMultiDownloadListener listener){
         this.call = call;
-        this.useHttpFilter = useHttpFilter;
         this.downloadListener = listener;
     }
 }

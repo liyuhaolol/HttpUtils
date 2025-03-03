@@ -172,7 +172,6 @@ public class RequestCenter {
         return new MultiDownloadCall(
                 HttpClient.getInstance(context)
                         .createRequest(CommonRequest.createGetRequest(url,null,null,true)),
-                false,
                 listener);
     }
 
