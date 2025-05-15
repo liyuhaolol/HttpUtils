@@ -6,8 +6,6 @@ import android.os.Looper;
 import android.os.Message;
 import android.util.Log;
 
-import androidx.annotation.NonNull;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,7 +37,7 @@ public class MultiRequestCenter {
 
    private final Handler handler = new Handler(Looper.getMainLooper()){
       @Override
-      public void handleMessage(@NonNull Message msg) {
+      public void handleMessage(Message msg) {
          switch (msg.what){
             case TASK_SUCCESS:
                if (listener != null){

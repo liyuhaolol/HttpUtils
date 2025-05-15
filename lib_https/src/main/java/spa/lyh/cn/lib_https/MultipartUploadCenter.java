@@ -8,7 +8,6 @@ import android.os.Message;
 import android.text.TextUtils;
 import android.util.Log;
 
-import androidx.annotation.NonNull;
 import androidx.documentfile.provider.DocumentFile;
 
 import com.alibaba.fastjson2.JSONObject;
@@ -41,7 +40,7 @@ public class MultipartUploadCenter {
     public final static int MERGE_FAIL = 1006;//合并失败
     private final Handler handler = new Handler(new Handler.Callback() {
         @Override
-        public boolean handleMessage(@NonNull Message msg) {
+        public boolean handleMessage(Message msg) {
             String info;
             switch (msg.what){
                 case TASK_SUCCESS:
@@ -369,7 +368,7 @@ public class MultipartUploadCenter {
         //合并接口
         HttpClient.getInstance(context).sendResquest(CommonRequest.createGetRequest(mergeUrl,bodyParams,headerParams,isDev),new DisposeDataHandle(new DisposeDataListener() {
             @Override
-            public void onSuccess(@NonNull Headers headerData, @NonNull String stringBody) {
+            public void onSuccess(Headers headerData, String stringBody) {
                 Result result = JSONObject.parseObject(stringBody,Result.class);
                 if (result.code == 200){
                     String info;
@@ -386,7 +385,7 @@ public class MultipartUploadCenter {
             }
 
             @Override
-            public void onFailure(@NonNull OkHttpException error) {
+            public void onFailure(OkHttpException error) {
                 sendMsg(MultipartUploadCenter.MERGE_FAIL,MERGE_MSG);
             }
         }, isDev));

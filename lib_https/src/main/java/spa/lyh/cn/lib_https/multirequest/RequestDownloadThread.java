@@ -5,10 +5,7 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
-import android.text.TextUtils;
 import android.util.Log;
-
-import androidx.annotation.NonNull;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -57,7 +54,7 @@ public class RequestDownloadThread extends Thread implements Runnable{
         this.mFilePath = filePath;
         this.mDeliveryHandler = new Handler(Looper.getMainLooper()){
             @Override
-            public void handleMessage(@NonNull Message msg) {
+            public void handleMessage(Message msg) {
                 switch (msg.what) {
                     case PROGRESS_MESSAGE:
                         Progress p = (Progress) msg.obj;

@@ -3,8 +3,6 @@ package spa.lyh.cn.lib_https.response;
 import android.os.Handler;
 import android.os.Looper;
 
-import androidx.annotation.NonNull;
-
 import java.io.IOException;
 
 import okhttp3.Call;
@@ -35,7 +33,7 @@ public class CommonDataCallback extends CommonBase implements Callback {
     }
 
     @Override
-    public void onFailure(@NonNull Call call, @NonNull IOException e) {
+    public void onFailure(Call call, IOException e) {
         if(e != null){
             e.printStackTrace();
             /**
@@ -57,7 +55,7 @@ public class CommonDataCallback extends CommonBase implements Callback {
     }
 
     @Override
-    public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+    public void onResponse(Call call, Response response) throws IOException {
         final String result = response.body().string();
         mDeliveryHandler.post(new Runnable() {
             @Override
