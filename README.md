@@ -1,3 +1,4 @@
+## 1.5.9版本，移除`org.conscrypt:conscrypt-android`,升级底层库
 ## 1.5.8版本，例行升级IO底层框架
 ## 1.5.7版本，修改Handler
 ## 1.5.6版本，移除无用参数

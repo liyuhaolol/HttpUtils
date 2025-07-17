@@ -10,8 +10,7 @@ import spa.lyh.cn.lib_https.listener.DisposeDownloadListener
 
 class SecondActivity : AppCompatActivity() {
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+    override fun onCreate(savedInstanceState: Bundle?) { super.onCreate(savedInstanceState)
 
         RequestCenter.getNewVersion(this,object : DisposeDataListener{
             override fun onSuccess(headerData: Headers, stringBody: String) {

@@ -33,7 +33,7 @@ dependencies {
     api("com.squareup.okhttp3:okhttp:${Lib.okhttp}")
     api("com.alibaba.fastjson2:fastjson2:${Lib.fastjson}")
     api("io.github.liyuhaolol:IO:${Lib.lib_io}")
-    implementation("org.conscrypt:conscrypt-android:${Lib.conscrypt}")
+    //implementation("org.conscrypt:conscrypt-android:${Lib.conscrypt}")
     implementation("androidx.documentfile:documentfile:${Lib.documentfile}")
 }
 
