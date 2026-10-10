@@ -16,32 +16,6 @@ plugins {
     signing
 }
 
-// 发布所需密钥，写在 local.properties 或环境变量中（同名）：
-//   signingKeyId / signingPassword / secretKeyRingFile
-//   ossrhUsername / ossrhPassword          —— Central Portal User Token
-//   signingKey（可选）                      —— ASCII armored 私钥，优先于 secretKeyRingFile
-fun secret(name: String): String? {
-    val local = rootProject.file("local.properties")
-    if (local.exists()) {
-        val props = Properties()
-        local.inputStream().bufferedReader(Charsets.UTF_8).use { props.load(it) }
-        props.getProperty(name)?.takeIf { it.isNotBlank() }?.let { return it }
-    }
-    return (findProperty(name) as? String)?.takeIf { it.isNotBlank() }
-        ?: System.getenv(name)?.takeIf { it.isNotBlank() }
-}
-
-val signingKeyId: String? = secret("signingKeyId")
-val signingPassword: String? = secret("signingPassword")
-val secretKeyRingFile: String? = secret("secretKeyRingFile")
-val signingKeyAscii: String? = secret("signingKey")
-val ossrhUsername: String? = secret("ossrhUsername")
-val ossrhPassword: String? = secret("ossrhPassword")
-
-val pomGroup = "io.github.liyuhaolol"
-val pomArtifact = "HttpUtils"
-val pomVersion = Version.versionName
-
 android {
     namespace = "spa.lyh.cn.lib_https"
     compileSdk = 37
@@ -76,6 +50,33 @@ dependencies {
     //implementation("org.conscrypt:conscrypt-android:${Lib.conscrypt}")
     implementation("androidx.documentfile:documentfile:${Lib.documentfile}")
 }
+
+
+// 发布所需密钥，写在 local.properties 或环境变量中（同名）：
+//   signingKeyId / signingPassword / secretKeyRingFile
+//   ossrhUsername / ossrhPassword          —— Central Portal User Token
+//   signingKey（可选）                      —— ASCII armored 私钥，优先于 secretKeyRingFile
+fun secret(name: String): String? {
+    val local = rootProject.file("local.properties")
+    if (local.exists()) {
+        val props = Properties()
+        local.inputStream().bufferedReader(Charsets.UTF_8).use { props.load(it) }
+        props.getProperty(name)?.takeIf { it.isNotBlank() }?.let { return it }
+    }
+    return (findProperty(name) as? String)?.takeIf { it.isNotBlank() }
+        ?: System.getenv(name)?.takeIf { it.isNotBlank() }
+}
+
+val signingKeyId: String? = secret("signingKeyId")
+val signingPassword: String? = secret("signingPassword")
+val secretKeyRingFile: String? = secret("secretKeyRingFile")
+val signingKeyAscii: String? = secret("signingKey")
+val ossrhUsername: String? = secret("ossrhUsername")
+val ossrhPassword: String? = secret("ossrhPassword")
+
+val pomGroup = "io.github.liyuhaolol"
+val pomArtifact = "HttpUtils"
+val pomVersion = Version.versionName
 
 val emptyJavadocJar = tasks.register<Jar>("emptyJavadocJar") {
     archiveClassifier.set("javadoc")
