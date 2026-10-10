@@ -15,6 +15,8 @@ import com.alibaba.fastjson2.TypeReference;
 
 import java.io.File;
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.util.Locale;
 
 import okhttp3.Headers;
 import spa.lyh.cn.lib_https.exception.OkHttpException;
@@ -439,10 +441,25 @@ public class MultipartUploadCenter {
      * @param number float的数
      * @return float的数
      */
-    public float getNumber(float number){
-        DecimalFormat df = new DecimalFormat("#.##############");
-        float f=Float.valueOf(df.format(number));
-        return f;
+    public float getNumber(float number) {
+        // 特殊值：原来的实现会格式化出 "∞" / "\uFFFD"，parseFloat 会崩
+        // 直接原样返回，语义上等价（比例计算里本来也不该出现这些值）
+        if (Float.isNaN(number) || Float.isInfinite(number)) {
+            return number;
+        }
+
+        // 关键：显式指定 Locale.US，保证小数点永远是 "."，不受系统语言影响
+        DecimalFormat df = new DecimalFormat(
+                "#.##############",
+                DecimalFormatSymbols.getInstance(Locale.US)
+        );
+
+        try {
+            return Float.parseFloat(df.format(number));
+        } catch (NumberFormatException e) {
+            // 兜底，理论上不会走到
+            return number;
+        }
     }
 
     /**
