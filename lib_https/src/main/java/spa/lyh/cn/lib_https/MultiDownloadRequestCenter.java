@@ -36,7 +36,7 @@ public class MultiDownloadRequestCenter {
 
     private boolean allowFinish = true;
 
-    private int mod = HttpClient.OVERWRITE_FIRST;
+    private boolean addOnly = false;
 
     private String mFilePath = "";
 
@@ -93,8 +93,8 @@ public class MultiDownloadRequestCenter {
         this.number = number;
         return this;
     }
-    public MultiDownloadRequestCenter setOverwriteMod(int mod){
-        this.mod = mod;
+    public MultiDownloadRequestCenter setFileAddOnly(boolean addOnly){
+        this.addOnly = addOnly;
         return this;
     }
 
@@ -125,11 +125,11 @@ public class MultiDownloadRequestCenter {
         this.listener = listener;
         if (checkCanStart()){
             if (pool == null){
-                pool = new RequestDownloadThreadPool(context,handler,number,requestList,devMode,mod,mFilePath);
+                pool = new RequestDownloadThreadPool(context,handler,number,requestList,devMode,addOnly,mFilePath);
                 pool.start();
             }else {
                 if (!pool.isAlive()){
-                    pool = new RequestDownloadThreadPool(context,handler,number,requestList,devMode,mod,mFilePath);
+                    pool = new RequestDownloadThreadPool(context,handler,number,requestList,devMode,addOnly,mFilePath);
                     pool.start();
                 }else {
                     Log.e(TAG,"任务正在进行，请不要重复启动");
@@ -201,7 +201,7 @@ public class MultiDownloadRequestCenter {
 
         mFilePath = null;
 
-        mod = HttpClient.OVERWRITE_FIRST;
+        addOnly = false;
 
     }
 }

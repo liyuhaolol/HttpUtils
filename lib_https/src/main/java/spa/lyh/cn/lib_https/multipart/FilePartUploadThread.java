@@ -10,6 +10,7 @@ import com.alibaba.fastjson2.JSONObject;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Map;
 
 import okhttp3.Call;
@@ -30,7 +31,7 @@ import spa.lyh.cn.lib_https.request.RequestParams;
 public class FilePartUploadThread extends Thread implements Runnable{
     private int pieceSize;
     private int chunk;
-    private FileInputStream fis;
+    private InputStream is;
     private int mPiceRealSize;
     private Handler handler;
     private MultipartBody body;
@@ -45,11 +46,11 @@ public class FilePartUploadThread extends Thread implements Runnable{
     private boolean shouldLock;
 
 
-    public FilePartUploadThread(Context context, Handler handler, int chunk, int pieceSize, String fileName, FileInputStream fis, String url, RequestParams bodyParams, HeaderParams headerParams){
+    public FilePartUploadThread(Context context, Handler handler, int chunk, int pieceSize, String fileName, InputStream is, String url, RequestParams bodyParams, HeaderParams headerParams){
         this.context = context;
         this.pieceSize = pieceSize;
         this.chunk = chunk;
-        this.fis = fis;
+        this.is = is;
         this.handler = handler;
         this.url = url;
         this.fileName = fileName;
@@ -75,7 +76,7 @@ public class FilePartUploadThread extends Thread implements Runnable{
         super.run();
         try{
             //1.读流
-            byte[] datas = readPice(fis);
+            byte[] datas = readPice(is);
             if (mPiceRealSize == -1 || mPiceRealSize == 0){
                 //没有读到分片，说明出了问题
                 //回调
@@ -100,11 +101,11 @@ public class FilePartUploadThread extends Thread implements Runnable{
      * @return
      * @throws IOException
      */
-    private byte[] readPice(FileInputStream fis) throws IOException {
+    private byte[] readPice(InputStream is) throws IOException {
         byte[] datas = new byte[pieceSize];
-        if (chunk*pieceSize == fis.skip(chunk*pieceSize)){
-            mPiceRealSize = fis.read(datas);
-            fis.close();
+        if (chunk*pieceSize == is.skip(chunk*pieceSize)){
+            mPiceRealSize = is.read(datas);
+            is.close();
         }else {
             //跳过流出现问题
             mPiceRealSize = 0;
@@ -200,7 +201,7 @@ public class FilePartUploadThread extends Thread implements Runnable{
     private void release(){
         pieceSize = 0;
         chunk = 0;
-        fis = null;
+        is = null;
         mPiceRealSize = 0;
         handler = null;
         body = null;

@@ -26,8 +26,6 @@ import spa.lyh.cn.lib_https.response.CommonDataCallback;
  */
 public class HttpClient {
     private static final int TIME_OUT = 60;//超时参数
-    public final static int OVERWRITE_FIRST = 1;
-    public final static int ADD_ONLY = 2;
     private OkHttpClient mOkHttpClient;
     private BaseHttpFilter httpFilter;//拦截器
 
@@ -104,10 +102,10 @@ public class HttpClient {
         return call;
     }
 
-    public Call downloadFile(Context context,Request request, DisposeDataHandle handle,int mod) {
+    public Call downloadFile(Context context,Request request, DisposeDataHandle handle,boolean addOnly) {
         if (request != null){
             Call call = mOkHttpClient.newCall(request);
-            call.enqueue(new CommonFileCallback(context,handle,mod));
+            call.enqueue(new CommonFileCallback(context,handle,addOnly));
             return call;
         }else {
             return null;

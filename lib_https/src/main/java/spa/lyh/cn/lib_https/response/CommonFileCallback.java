@@ -7,10 +7,9 @@ import android.os.Looper;
 import android.os.Message;
 import android.util.Log;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.Locale;
@@ -57,17 +56,17 @@ public class CommonFileCallback extends CommonBase implements Callback {
     private boolean devMode;
 
     private Context context;
-    private int mod;
+    private boolean addOnly = false;
 
     private long requestTime;
 
-    public CommonFileCallback(Context context,DisposeDataHandle handle,int mod) {
+    public CommonFileCallback(Context context,DisposeDataHandle handle,boolean addOnly) {
         requestTime = System.currentTimeMillis();
         this.mListener = handle.downloadListener;
         this.mFilePath = handle.mSource;
         this.devMode = handle.devMode;
         this.context = context;
-        this.mod = mod;
+        this.addOnly = addOnly;
         this.mDeliveryHandler = new Handler(Looper.getMainLooper()) {
             @Override
             public void handleMessage(Message msg) {
@@ -149,7 +148,7 @@ public class CommonFileCallback extends CommonBase implements Callback {
         int length;//每一块的长度
         byte[] buffer = new byte[2048];//每一段的长度
         InputStream inputStream = null;
-        FileOutputStream fos = null;
+        OutputStream os = null;
 
 
         int currentLength = 0;//当前已经下载的大小
@@ -162,12 +161,12 @@ public class CommonFileCallback extends CommonBase implements Callback {
         try {
 
             inputStream  = response.body().byteStream();//输入流
-            data = IOUtils.createFileOutputStream(context,mFilePath,filename,mod);
-            if (data == null || data.getFos() == null){
+            data = IOUtils.createOutputStream(context,mFilePath,filename,addOnly);
+            if (data == null || data.getOs() == null){
                 mDeliveryHandler.obtainMessage(FAILURE_MESSAGE, new OkHttpException(OkHttpException.OTHER_ERROR, EMPTY_RESPONSE,null)).sendToTarget();
                 return;
             }
-            fos = data.getFos();
+            os = data.getOs();
             sumLength = response.body().contentLength();//文件总大小
 
 
@@ -180,7 +179,7 @@ public class CommonFileCallback extends CommonBase implements Callback {
 
                 mDeliveryHandler.obtainMessage(PROGRESS_MESSAGE, p).sendToTarget();
                 while ((length = inputStream.read(buffer)) != -1) {
-                    fos.write(buffer, 0, length);
+                    os.write(buffer, 0, length);
                     currentLength += length;
                     //计算百分比
                     mProgress = getNumber((float)currentLength/(float)sumLength)*100;
@@ -195,7 +194,7 @@ public class CommonFileCallback extends CommonBase implements Callback {
                         mDeliveryHandler.obtainMessage(PROGRESS_MESSAGE, p).sendToTarget();
                     }
                 }
-                fos.flush();
+                os.flush();
             }else {
                 //无法获取到对应的文件总长度
                 p = new Progress(false,0,convertFileSize(0),"");
@@ -206,7 +205,7 @@ public class CommonFileCallback extends CommonBase implements Callback {
 
                 mDeliveryHandler.obtainMessage(PROGRESS_MESSAGE, p).sendToTarget();
                 while ((length = inputStream.read(buffer)) != -1) {
-                    fos.write(buffer, 0, length);
+                    os.write(buffer, 0, length);
                     currentLength += length;
 
                     p = new Progress(false,0,convertFileSize(currentLength),"");
@@ -215,7 +214,7 @@ public class CommonFileCallback extends CommonBase implements Callback {
                     }
                     mDeliveryHandler.obtainMessage(PROGRESS_MESSAGE, p).sendToTarget();
                 }
-                fos.flush();
+                os.flush();
             }
 
         } catch (Exception e) {
@@ -224,8 +223,8 @@ public class CommonFileCallback extends CommonBase implements Callback {
             return;
         } finally {
             try {
-                if (fos != null){
-                    fos.close();
+                if (os != null){
+                    os.close();
                 }
                 if (inputStream != null) {
 

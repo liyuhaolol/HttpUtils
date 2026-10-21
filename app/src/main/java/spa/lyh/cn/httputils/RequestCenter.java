@@ -165,7 +165,7 @@ public class RequestCenter {
         HeaderParams params = new HeaderParams();
         return HttpClient.getInstance(context).downloadFile(context,
                 CommonRequest.createDownloadRequest(url, null, params, true),
-                new DisposeDataHandle(listener, path, true),HttpClient.OVERWRITE_FIRST);
+                new DisposeDataHandle(listener, path, true),false);
     }
 
     public static MultiDownloadCall createDownloadFile(Context context, String url, DisposeMultiDownloadListener listener){
@@ -179,7 +179,7 @@ public class RequestCenter {
         MultiDownloadRequestCenter
                 .get(context)
                 .setDevMode(true)
-                .setOverwriteMod(HttpClient.OVERWRITE_FIRST)
+                .setFileAddOnly(false)
                 .setFilePath(filePath)
                 .addRequests(calls)
                 .startTasks(listener);

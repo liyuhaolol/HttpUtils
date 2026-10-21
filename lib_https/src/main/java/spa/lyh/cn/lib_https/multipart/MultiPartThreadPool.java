@@ -8,6 +8,7 @@ import android.util.Log;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.InputStream;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -50,7 +51,7 @@ public class MultiPartThreadPool extends Thread{
         super.run();
         service = Executors.newFixedThreadPool(threads);
         for (int i = 0;i < chunks; i++){
-            service.execute(new FilePartUploadThread(context,handler,i,pieceSize,fileName,getFileInputStream(res),url,bodyParams,headerParams));
+            service.execute(new FilePartUploadThread(context,handler,i,pieceSize,fileName,getInputStream(res),url,bodyParams,headerParams));
         }
         service.shutdown();
         while (!service.isTerminated()){
@@ -90,20 +91,20 @@ public class MultiPartThreadPool extends Thread{
         }
     }
 
-    private FileInputStream getFileInputStream(Object res){
-        FileInputStream fis = null;
+    private InputStream getInputStream(Object res){
+        InputStream is = null;
         try{
             if (res instanceof File){
-                fis = new FileInputStream((File) res);
+                is = new FileInputStream((File) res);
             }
             if (res instanceof Uri){
-                fis = IOUtils.getFileInputStream(context,(Uri) res);
+                is = IOUtils.openInputStream(context,(Uri)res);
             }
         }catch (Exception e){
             e.printStackTrace();
 
         }
-        return fis;
+        return is;
     }
 
     private void release(){

@@ -10,6 +10,7 @@ import android.util.Log;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.Locale;
@@ -36,7 +37,7 @@ public class RequestDownloadThread extends Thread implements Runnable{
     private boolean devMode;
     private long requestTime;
     private Context context;
-    private int mod;
+    private boolean addOnly;
     private String mFilePath;
 
     private static final int PROGRESS_MESSAGE = 0x01;
@@ -48,11 +49,11 @@ public class RequestDownloadThread extends Thread implements Runnable{
      */
     private static final String DEAFULT_FILE_NAME = "default";
 
-    public RequestDownloadThread(Context context,Handler handler,MultiDownloadCall call,boolean devMode,int mod,String filePath){
+    public RequestDownloadThread(Context context,Handler handler,MultiDownloadCall call,boolean devMode,boolean addOnly,String filePath){
         this.context = context;
         this.multiCall = call;
         this.questHandler = handler;
-        this.mod = mod;
+        this.addOnly = addOnly;
         this.mFilePath = filePath;
         this.mDeliveryHandler = new Handler(Looper.getMainLooper()){
             @Override
@@ -134,7 +135,7 @@ public class RequestDownloadThread extends Thread implements Runnable{
         int length;//每一块的长度
         byte[] buffer = new byte[2048];//每一段的长度
         InputStream inputStream = null;
-        FileOutputStream fos = null;
+        OutputStream os = null;
 
 
         int currentLength = 0;//当前已经下载的大小
@@ -146,12 +147,12 @@ public class RequestDownloadThread extends Thread implements Runnable{
         Progress p;
         try {
             inputStream  = execute.body().byteStream();//输入流
-            data = IOUtils.createFileOutputStream(context,mFilePath,filename,mod);
-            if (data == null || data.getFos() == null){
+            data = IOUtils.createOutputStream(context,mFilePath,filename,addOnly);
+            if (data == null || data.getOs() == null){
                 mDeliveryHandler.obtainMessage(FAILURE_MESSAGE, new OkHttpException(OkHttpException.OTHER_ERROR, CommonBase.EMPTY_RESPONSE,null)).sendToTarget();
                 return;
             }
-            fos = data.getFos();
+            os = data.getOs();
             sumLength = execute.body().contentLength();//文件总大小
 
 
@@ -164,7 +165,7 @@ public class RequestDownloadThread extends Thread implements Runnable{
 
                 mDeliveryHandler.obtainMessage(PROGRESS_MESSAGE, p).sendToTarget();
                 while ((length = inputStream.read(buffer)) != -1) {
-                    fos.write(buffer, 0, length);
+                    os.write(buffer, 0, length);
                     currentLength += length;
                     //计算百分比
                     mProgress = getNumber((float)currentLength/(float)sumLength)*100;
@@ -179,7 +180,7 @@ public class RequestDownloadThread extends Thread implements Runnable{
                         mDeliveryHandler.obtainMessage(PROGRESS_MESSAGE, p).sendToTarget();
                     }
                 }
-                fos.flush();
+                os.flush();
             }else {
                 //无法获取到对应的文件总长度
                 p = new Progress(false,0,convertFileSize(0),"");
@@ -190,7 +191,7 @@ public class RequestDownloadThread extends Thread implements Runnable{
 
                 mDeliveryHandler.obtainMessage(PROGRESS_MESSAGE, p).sendToTarget();
                 while ((length = inputStream.read(buffer)) != -1) {
-                    fos.write(buffer, 0, length);
+                    os.write(buffer, 0, length);
                     currentLength += length;
 
                     p = new Progress(false,0,convertFileSize(currentLength),"");
@@ -199,7 +200,7 @@ public class RequestDownloadThread extends Thread implements Runnable{
                     }
                     mDeliveryHandler.obtainMessage(PROGRESS_MESSAGE, p).sendToTarget();
                 }
-                fos.flush();
+                os.flush();
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -207,8 +208,8 @@ public class RequestDownloadThread extends Thread implements Runnable{
             return;
         } finally {
             try {
-                if (fos != null){
-                    fos.close();
+                if (os != null){
+                    os.close();
                 }
                 if (inputStream != null) {
 
@@ -233,7 +234,7 @@ public class RequestDownloadThread extends Thread implements Runnable{
         context = null;
         allowFinish = true;
         questHandler = null;
-        mod = HttpClient.OVERWRITE_FIRST;
+        addOnly = false;
         mFilePath = null;
     }
 

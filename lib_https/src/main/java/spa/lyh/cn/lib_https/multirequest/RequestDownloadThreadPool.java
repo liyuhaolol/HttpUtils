@@ -20,19 +20,19 @@ public class RequestDownloadThreadPool extends Thread{
     private int mode;
     private boolean devMode;
     private Context context;
-    private int mod;
+    private boolean addOnly;
     private String mFilePath;
 
     private List<MultiDownloadCall> listCall;
 
-    public RequestDownloadThreadPool(Context context,Handler handler, int threads,List<MultiDownloadCall> listCall,boolean devMode,int mod,String filePath){
+    public RequestDownloadThreadPool(Context context,Handler handler, int threads,List<MultiDownloadCall> listCall,boolean devMode,boolean addOnly,String filePath){
         this.handler = handler;
         this.threads = threads;
         this.listCall = new ArrayList<>();
         this.listCall.addAll(listCall);
         this.devMode = devMode;
         this.context = context;
-        this.mod = mod;
+        this.addOnly = addOnly;
         this.mFilePath = filePath;
     }
 
@@ -41,7 +41,7 @@ public class RequestDownloadThreadPool extends Thread{
         super.run();
         service = Executors.newFixedThreadPool(threads);
         for (int i = 0;i < listCall.size(); i++){
-            service.execute(new RequestDownloadThread(context,handler,listCall.get(i),devMode,mod,mFilePath));
+            service.execute(new RequestDownloadThread(context,handler,listCall.get(i),devMode,addOnly,mFilePath));
         }
         service.shutdown();
         while (!service.isTerminated()){
@@ -82,7 +82,7 @@ public class RequestDownloadThreadPool extends Thread{
         mode = 0;
         listCall.clear();
         context = null;
-        mod = HttpClient.OVERWRITE_FIRST;
+        addOnly = false;
         mFilePath = null;
     }
 }
